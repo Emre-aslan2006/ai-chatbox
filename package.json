@@ -1,8 +1,5 @@
 {
-  "name": "ai-chatbox",
-  "version": "1.0.0",
-  "description": "AI Chatbox using Node.js and OpenRouter API",
-  "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
