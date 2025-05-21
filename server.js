@@ -1,17 +1,22 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import fetch from 'node-fetch';
+import fetch from 'node-fetch'; // Needed for Render
 
 dotenv.config();
 
 const app = express();
 
-// ✅ Enable CORS for all origins (temporary, safe for dev)
-app.use(cors({ origin: true, credentials: true }));
+// CORS CONFIG: Replace with your actual frontend GitHub Pages domain
+app.use(cors({
+  origin: 'https://emre-aslan2006.github.io',
+  methods: ['POST'],
+  credentials: false
+}));
+
 app.use(express.json());
 
-// === ROUTE ===
+// MAIN API ENDPOINT
 app.post('/api/chat', async (req, res) => {
   try {
     const userMessages = req.body.messages;
@@ -31,14 +36,21 @@ app.post('/api/chat', async (req, res) => {
     const data = await response.json();
 
     if (!data || !data.choices) {
-      return res.status(500).json({ error: 'Invalid response from OpenRouter API.' });
+      console.error('Invalid API response:', data);
+      return res.status(500).json({ error: 'Invalid response from OpenRouter' });
     }
 
     res.json(data);
+
   } catch (error) {
-    console.error('❌ SERVER ERROR:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('SERVER ERROR:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
   }
+});
+
+// BASE ROUTE (optional)
+app.get('/', (req, res) => {
+  res.send('AI Chatbox Backend is Live');
 });
 
 const PORT = process.env.PORT || 3000;
