@@ -1,4 +1,3 @@
-
 const chatbox = document.getElementById("chatbox");
 const form = document.getElementById("chat-form");
 const userInput = document.getElementById("user-input");
@@ -35,7 +34,7 @@ function updateLastBotMessage(text) {
 }
 
 async function getBotReply(input) {
-  const response = await fetch("/api/chat", {
+  const response = await fetch("https://ai-chatbox-server.onrender.com/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages: [{ role: "user", content: input }] })
