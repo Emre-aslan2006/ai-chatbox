@@ -275,54 +275,45 @@
   // Markdown
   function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
   function md(text){
+    var BT=String.fromCharCode(96);
     var codeBlocks=[];
-    text=text.replace(/```(\w*)
-?([\s\S]*?)```/g,function(_,lang,code){
+    var codeRe=new RegExp(BT+BT+BT+'(\\w*)\\n?([\\s\\S]*?)'+BT+BT+BT,'g');
+    var inlineRe=new RegExp(BT+'([^'+BT+'\\n]+)'+BT,'g');
+    text=text.replace(codeRe,function(_,lang,code){
       var i=codeBlocks.length;var safeCode=escHtml(code.trim());var langLabel=lang||'text';
-      var copyBtn='<button class="copy-code-btn" onclick="window.aura_copyCode(this)"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>';
-      codeBlocks.push('<div class="code-block"><div class="code-header"><span class="code-lang">'+langLabel+'</span>'+copyBtn+'</div><pre><code>'+safeCode+'</code></pre></div>');
-      return ' CODE'+i+' ';
+      var copyBtn='<button class="copy-code-btn" onclick="window.aura_copyCode(this)">Copy<\/button>';
+      codeBlocks.push('<div class="code-block"><div class="code-header"><span class="code-lang">'+langLabel+'<\/span>'+copyBtn+'<\/div><pre><code>'+safeCode+'<\/code><\/pre><\/div>');
+      return '\x00CODE'+i+'\x00';
     });
-    text=text.replace(/`([^`
-]+)`/g,function(_,c){return '<span class="inline-code">'+escHtml(c)+'</span>';});
+    text=text.replace(inlineRe,function(_,c){return '<span class="inline-code">'+escHtml(c)+'<\/span>';});
     text=escHtml(text);
-    text=text.replace(/^### (.+)$/gm,'<h3>$1</h3>');
-    text=text.replace(/^## (.+)$/gm,'<h2>$1</h2>');
-    text=text.replace(/^# (.+)$/gm,'<h1>$1</h1>');
-    text=text.replace(/\*\*\*([^*]+)\*\*\*/g,'<strong><em>$1</em></strong>');
-    text=text.replace(/\*\*([^*
-]+)\*\*/g,'<strong>$1</strong>');
-    text=text.replace(/__([^_
-]+)__/g,'<strong>$1</strong>');
-    text=text.replace(/\*([^*
-]+)\*/g,'<em>$1</em>');
-    text=text.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
+    text=text.replace(/^### (.+)$/gm,'<h3>$1<\/h3>');
+    text=text.replace(/^## (.+)$/gm,'<h2>$1<\/h2>');
+    text=text.replace(/^# (.+)$/gm,'<h1>$1<\/h1>');
+    text=text.replace(/\*\*\*([^*]+)\*\*\*/g,'<strong><em>$1<\/em><\/strong>');
+    text=text.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1<\/strong>');
+    text=text.replace(/__([^_\n]+)__/g,'<strong>$1<\/strong>');
+    text=text.replace(/\*([^*\n]+)\*/g,'<em>$1<\/em>');
+    text=text.replace(/^&gt; (.+)$/gm,'<blockquote>$1<\/blockquote>');
     text=text.replace(/^---$/gm,'<hr>');
-    text=text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
-    text=text.replace(/((?:^[-*] .+
-?)+)/gm,function(block){
-      var items=block.trim().split('
-').map(function(l){return '<li>'+l.replace(/^[-*] /,'')+'</li>';});
-      return '<ul>'+items.join('')+'</ul>';
+    text=text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1<\/a>');
+    text=text.replace(/((?:^[-*] .+\n?)+)/gm,function(block){
+      var items=block.trim().split('\n').map(function(l){return '<li>'+l.replace(/^[-*] /,'')+'<\/li>';});
+      return '<ul>'+items.join('')+'<\/ul>';
     });
-    text=text.replace(/((?:^\d+\. .+
-?)+)/gm,function(block){
-      var items=block.trim().split('
-').map(function(l){return '<li>'+l.replace(/^\d+\. /,'')+'</li>';});
-      return '<ol>'+items.join('')+'</ol>';
+    text=text.replace(/((?:^\d+\. .+\n?)+)/gm,function(block){
+      var items=block.trim().split('\n').map(function(l){return '<li>'+l.replace(/^\d+\. /,'')+'<\/li>';});
+      return '<ol>'+items.join('')+'<\/ol>';
     });
-    text=text.split('
-
-').map(function(p){
+    text=text.split('\n\n').map(function(p){
       p=p.trim();if(!p)return '';
       if(/^<[hHuUoObBpHR]/.test(p))return p;
-      return '<p>'+p.replace(/
-/g,'<br>')+'</p>';
-    }).join('
-');
-    codeBlocks.forEach(function(cb,i){text=text.replace(' CODE'+i+' ',cb);});
+      return '<p>'+p.replace(/\n/g,'<br>')+'<\/p>';
+    }).join('\n');
+    codeBlocks.forEach(function(cb,i){text=text.replace('\x00CODE'+i+'\x00',cb);});
     return text;
   }
+
   window.aura_copyCode=function(btn){
     var code=btn.closest('.code-block').querySelector('code');
     navigator.clipboard.writeText(code.textContent).then(function(){
