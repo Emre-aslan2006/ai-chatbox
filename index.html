@@ -180,233 +180,162 @@
 <div class="copied-toast" id="copiedToast">Copied!</div>
 
 <script>
-var OR_API_KEY = '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';
-var OR_URL = 'https://openrouter.ai/api/v1/chat/completions';
-var OR_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
+  // Aura AI - Powered by Pollinations AI (free, no API key, no limits)
 
-var SYSTEM_PROMPT = 'You are Aura AI - a smart, friendly, and genuinely helpful AI assistant built by Emre Aslan. Respond naturally and directly to whatever the user says. For casual chat, be relaxed and friendly. For questions, give real answers. For code, give actual working code. For venting or emotions, be empathetic. Never give vague non-answers. Keep replies concise but helpful. Use markdown for formatting when useful.';
+  const messagesContainer = document.getElementById('messagesContainer');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const newChatBtn = document.getElementById('newChatBtn');
 
-var convs = JSON.parse(localStorage.getItem('aura_convs') || '[]');
-var currentId = null;
-var chatHistory = [];
+  let conversationHistory = [];
+  let chatHistory = JSON.parse(localStorage.getItem('aura_chat_history') || '[]');
+  let currentChatId = Date.now().toString();
 
-function nowTime() {
-  return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-}
+  const SYSTEM_PROMPT = 'You are Aura AI, a helpful, friendly, and intelligent assistant. Respond naturally and helpfully to anything the user says, whether casual conversation, venting, questions, or technical requests. Be conversational, concise, and empathetic.';
 
-function md(t) {
-  if (!t) return '';
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/```(\w*)\n?([\s\S]*?)```/g, function(_,l,c){ return '<pre><code>'+c.trim()+'</code></pre>'; })
-    .replace(/`([^`\n]+)`/g,'<code>$1</code>')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/^-\s(.+)$/gm,'<li>$1</li>')
-    .replace(/\n/g,'<br>');
-}
+  function escapeHtml(t) {
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
 
-function escHtml(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function saveConvs() { localStorage.setItem('aura_convs', JSON.stringify(convs)); }
+  function formatMsg(text) {
+    text = escapeHtml(text);
+    text = text.replace(/```([sS]*?)```/g, '<pre><code>$1</code></pre>');
+    text = text.replace(/`([^`
+]+)`/g, '<code>$1</code>');
+    text = text.replace(/**([^*]+)**/g, '<strong>$1</strong>');
+    text = text.replace(/
+/g, '<br>');
+    return text;
+  }
 
-async function callAI(userText) {
-  chatHistory.push({ role: 'user', content: userText });
+  function renderChatList() {
+    const chatHistoryEl = document.getElementById('chatHistory');
+    if (!chatHistoryEl) return;
+    chatHistoryEl.innerHTML = '';
+    chatHistory.slice().reverse().forEach(function(chat) {
+      const div = document.createElement('div');
+      div.className = 'history-item' + (chat.id === currentChatId ? ' active' : '');
+      div.innerHTML = '<span>💬</span> ' + escapeHtml(chat.title.substring(0,35));
+      div.onclick = function() { loadChat(chat.id); };
+      chatHistoryEl.appendChild(div);
+    });
+  }
 
-  var messages = [{ role: 'system', content: SYSTEM_PROMPT }].concat(chatHistory);
+  function addMessage(role, content) {
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    const div = document.createElement('div');
+    div.className = 'message ' + role;
+    const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    if (role === 'assistant') {
+      div.innerHTML = '<div class="msg-avatar"><span>✨</span></div><div class="msg-body"><div class="msg-sender">Aura AI</div><div class="msg-text">' + formatMsg(content) + '</div><div class="msg-time">' + time + '</div></div>';
+    } else {
+      div.innerHTML = '<div class="msg-body user-body"><div class="msg-text user-text">' + escapeHtml(content) + '</div><div class="msg-time">' + time + '</div></div><div class="msg-avatar user-avatar"><span>You</span></div>';
+    }
+    if (typingIndicator && typingIndicator.parentNode === messagesContainer) {
+      messagesContainer.insertBefore(div, typingIndicator);
+    } else {
+      messagesContainer.appendChild(div);
+    }
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
 
-  var res = await fetch(OR_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + OR_API_KEY,
-      'HTTP-Referer': 'https://emre-aslan2006.github.io/ai-chatbox/',
-      'X-Title': 'Aura AI'
-    },
-    body: JSON.stringify({
-      model: OR_MODEL,
-      messages: messages,
-      temperature: 0.9,
-      max_tokens: 1500
-    })
+  function showTyping() { if (typingIndicator) { typingIndicator.style.display = 'flex'; messagesContainer.scrollTop = messagesContainer.scrollHeight; } }
+  function hideTyping() { if (typingIndicator) typingIndicator.style.display = 'none'; }
+
+  async function callAI(messages) {
+    const parts = messages.map(function(m) {
+      return (m.role === 'user' ? 'User' : 'Assistant') + ': ' + m.content;
+    }).join('
+');
+    const full = SYSTEM_PROMPT + '
+
+' + parts + '
+Assistant:';
+    const url = 'https://text.pollinations.ai/' + encodeURIComponent(full) + '?model=openai&seed=' + Math.floor(Math.random()*99999);
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const txt = await resp.text();
+    return txt.trim();
+  }
+
+  async function sendMessage() {
+    const text = userInput.value.trim();
+    if (!text) return;
+    userInput.value = '';
+    userInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    addMessage('user', text);
+    conversationHistory.push({role:'user', content:text});
+    showTyping();
+    try {
+      const reply = await callAI(conversationHistory);
+      hideTyping();
+      addMessage('assistant', reply);
+      conversationHistory.push({role:'assistant', content:reply});
+      if (conversationHistory.length === 2) {
+        chatHistory.push({id:currentChatId, title:text.substring(0,50), messages:conversationHistory.slice()});
+      } else {
+        const idx = chatHistory.findIndex(function(c){return c.id===currentChatId;});
+        if (idx>=0) chatHistory[idx].messages = conversationHistory.slice();
+      }
+      localStorage.setItem('aura_chat_history', JSON.stringify(chatHistory));
+      renderChatList();
+    } catch(err) {
+      hideTyping();
+      console.error('[Aura AI] Error:', err.message);
+      addMessage('assistant', 'Sorry, I had trouble connecting. Please try again in a moment.');
+    }
+    sendBtn.disabled = false;
+    userInput.focus();
+  }
+
+  function loadChat(chatId) {
+    const chat = chatHistory.find(function(c){return c.id===chatId;});
+    if (!chat) return;
+    currentChatId = chatId;
+    conversationHistory = chat.messages.slice();
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    messagesContainer.innerHTML = '';
+    if (typingIndicator) messagesContainer.appendChild(typingIndicator);
+    chat.messages.forEach(function(m){addMessage(m.role,m.content);});
+    renderChatList();
+  }
+
+  if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+  if (userInput) {
+    userInput.addEventListener('keydown', function(e) {
+      if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    userInput.addEventListener('input', function() {
+      this.style.height='auto';
+      this.style.height=Math.min(this.scrollHeight,200)+'px';
+    });
+  }
+  if (newChatBtn) {
+    newChatBtn.addEventListener('click', function() {
+      currentChatId = Date.now().toString();
+      conversationHistory = [];
+      messagesContainer.innerHTML = '';
+      if (typingIndicator) messagesContainer.appendChild(typingIndicator);
+      if (welcomeScreen) welcomeScreen.style.display = 'flex';
+      renderChatList();
+    });
+  }
+  document.querySelectorAll('.prompt-chip, .chip-btn').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      if (userInput) { userInput.value = this.textContent.trim(); userInput.focus(); }
+    });
   });
-
-  if (!res.ok) {
-    var errBody = await res.text().catch(function(){ return ''; });
-    throw new Error('HTTP ' + res.status + ': ' + errBody.slice(0, 300));
-  }
-
-  var data = await res.json();
-  var reply = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-  if (!reply) throw new Error('Empty response');
-
-  chatHistory.push({ role: 'assistant', content: reply });
-  return reply;
-}
-
-function createConv(firstMsg) {
-  var id = 'conv_' + Date.now();
-  convs.unshift({ id: id, title: firstMsg.slice(0,50) + (firstMsg.length > 50 ? '...' : ''), msgs: [], created: Date.now() });
-  saveConvs(); return id;
-}
-
-function loadConv(id) {
-  currentId = id;
-  var c = convs.find(function(x){ return x.id === id; });
-  if (!c) return;
-  chatHistory = c.msgs.map(function(m){ return { role: m.role === 'user' ? 'user' : 'assistant', content: m.text }; });
-  var mc = document.getElementById('messagesContainer');
-  mc.innerHTML = '';
-  var w = document.getElementById('welcomeScreen');
-  if (w) w.style.display = 'none';
-  mc.style.display = 'flex';
-  c.msgs.forEach(function(m){ renderMsg(m.role, m.text, m.time, false); });
-  renderHistory();
-  mc.scrollTop = mc.scrollHeight;
-}
-
-function renderHistory() {
-  var el = document.getElementById('chatHistory');
-  if (!el) return;
-  el.innerHTML = '';
-  convs.forEach(function(c) {
-    var d = document.createElement('div');
-    d.className = 'history-item' + (c.id === currentId ? ' active' : '');
-    d.innerHTML = '<span>&#128172;</span><span>' + escHtml(c.title) + '</span>';
-    d.onclick = function(){ loadConv(c.id); };
-    el.appendChild(d);
-  });
-}
-
-function renderMsg(role, text, time, animate) {
-  if (animate === undefined) animate = true;
-  var mc = document.getElementById('messagesContainer');
-  var welcome = document.getElementById('welcomeScreen');
-  if (welcome) welcome.style.display = 'none';
-  mc.style.display = 'flex';
-  var isUser = role === 'user';
-  var g = document.createElement('div');
-  g.className = 'msg-group';
-  if (!animate) g.style.animation = 'none';
-  var actions = !isUser ? '<div class="msg-actions"><button class="msg-action-btn" onclick="copyMsg(this)">&#128203; Copy</button><button class="msg-action-btn" onclick="regenLast()">&#128260; Regen</button><button class="msg-action-btn" onclick="rateFn(this,1)">&#128077;</button><button class="msg-action-btn" onclick="rateFn(this,-1)">&#128078;</button></div>' : '';
-  g.innerHTML = '<div class="msg-row '+(isUser?'user':'')+'"><div class="msg-avatar '+(isUser?'user-av':'ai')+'">'+(isUser?'E':'&#10024;')+'</div><div class="msg-content"><div class="msg-sender">'+(isUser?'You':'Aura AI')+'</div><div class="msg-bubble '+(isUser?'user':'ai')+'">'+(isUser?escHtml(text):md(text))+'</div><div class="msg-time">'+time+'</div>'+actions+'</div></div>';
-  mc.appendChild(g);
-  mc.scrollTop = mc.scrollHeight;
-}
-
-async function sendMsg() {
-  var ta = document.getElementById('userInput');
-  var text = ta.value.trim();
-  if (!text) return;
-  ta.value = ''; ta.style.height = '';
-  document.getElementById('sendBtn').disabled = true;
-  if (!currentId) { currentId = createConv(text); chatHistory = []; }
-  var time = nowTime();
-  var c = convs.find(function(x){ return x.id === currentId; });
-  c.msgs.push({ role: 'user', text: text, time: time });
-  saveConvs();
-  renderMsg('user', text, time);
-  renderHistory();
-  var typing = document.getElementById('typingIndicator');
-  typing.classList.add('visible');
-  document.getElementById('messagesContainer').scrollTop = 99999;
-  try {
-    var reply = await callAI(text);
-    var rt = nowTime();
-    typing.classList.remove('visible');
-    c.msgs.push({ role: 'ai', text: reply, time: rt });
-    saveConvs();
-    renderMsg('ai', reply, rt);
-  } catch(err) {
-    typing.classList.remove('visible');
-    var et = nowTime();
-    var msg = 'Sorry, something went wrong. Please try again.';
-    if (err.message.indexOf('HTTP 429') !== -1) msg = 'Too many requests - please wait a moment and try again.';
-    else if (err.message.indexOf('HTTP 4') !== -1) msg = 'API error. Please try again shortly.';
-    else if (!navigator.onLine) msg = "You appear to be offline. Check your connection.";
-    console.error('[Aura AI]', err.message);
-    c.msgs.push({ role: 'ai', text: msg, time: et });
-    saveConvs();
-    renderMsg('ai', msg, et);
-  }
-  document.getElementById('sendBtn').disabled = false;
-  ta.focus();
-}
-
-async function regenLast() {
-  if (!currentId) return;
-  var c = convs.find(function(x){ return x.id === currentId; });
-  if (!c || c.msgs.length < 2) return;
-  var mc = document.getElementById('messagesContainer');
-  var groups = mc.querySelectorAll('.msg-group');
-  if (groups.length) groups[groups.length-1].remove();
-  if (c.msgs[c.msgs.length-1].role === 'ai') {
-    c.msgs.pop();
-    if (chatHistory.length && chatHistory[chatHistory.length-1].role === 'assistant') chatHistory.pop();
-  }
-  saveConvs();
-  var lastUser = null;
-  for (var i = c.msgs.length-1; i >= 0; i--) { if (c.msgs[i].role === 'user') { lastUser = c.msgs[i]; break; } }
-  if (!lastUser) return;
-  if (chatHistory.length && chatHistory[chatHistory.length-1].role === 'user') chatHistory.pop();
-  var typing = document.getElementById('typingIndicator');
-  typing.classList.add('visible');
-  document.getElementById('sendBtn').disabled = true;
-  try {
-    var reply = await callAI(lastUser.text);
-    var rt = nowTime();
-    typing.classList.remove('visible');
-    c.msgs.push({ role: 'ai', text: reply, time: rt });
-    saveConvs();
-    renderMsg('ai', reply, rt);
-  } catch(err) {
-    typing.classList.remove('visible');
-    renderMsg('ai', 'Regeneration failed. Please try again.', nowTime());
-  }
-  document.getElementById('sendBtn').disabled = false;
-}
-
-function copyMsg(btn) {
-  var bubble = btn.closest('.msg-group').querySelector('.msg-bubble');
-  navigator.clipboard.writeText(bubble.innerText).then(function(){ showToast('Copied!'); });
-}
-function rateFn(btn, v) { showToast(v > 0 ? 'Thanks for the feedback!' : "Got it, will do better!"); }
-function showToast(msg) {
-  var t = document.getElementById('copiedToast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 2200);
-}
-function startNewChat() {
-  currentId = null; chatHistory = [];
-  var mc = document.getElementById('messagesContainer');
-  mc.innerHTML = ''; mc.style.display = 'none';
-  var w = document.getElementById('welcomeScreen');
-  if (w) w.style.display = 'flex';
-  renderHistory();
-}
-function add() { startNewChat(); }
-function bindSuggestions() {
   document.querySelectorAll('.suggestion-card').forEach(function(card) {
-    card.onclick = function() {
-      var ta = document.getElementById('userInput');
-      ta.value = (card.querySelector('.sg-title') || {}).textContent || '';
-      ta.focus(); sendMsg();
-    };
+    card.addEventListener('click', function() {
+      const desc = card.querySelector('p') || card.querySelector('.card-desc');
+      const txt = desc ? desc.textContent.trim() : card.textContent.trim();
+      if (userInput) { userInput.value = txt; sendMessage(); }
+    });
   });
-}
-document.addEventListener('DOMContentLoaded', function() {
-  renderHistory(); bindSuggestions();
-  var nb = document.getElementById('newChatBtn');
-  if (nb) nb.addEventListener('click', startNewChat);
-  var ta = document.getElementById('userInput');
-  if (ta) {
-    ta.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
-    ta.addEventListener('input', function() { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 140) + 'px'; });
-  }
-  var sb = document.getElementById('sendBtn');
-  if (sb) sb.addEventListener('click', sendMsg);
-  document.querySelectorAll('.quick-btn').forEach(function(btn) {
-    btn.onclick = function() { var ta = document.getElementById('userInput'); ta.value = btn.textContent.trim(); ta.focus(); };
-  });
-});
+  renderChatList();
 </script>
 </body>
 </html>
