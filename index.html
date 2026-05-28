@@ -285,7 +285,8 @@
       var cb='<div class="code-block"><div class="code-header"><span class="code-lang">'+lbl+'</span>'+'<button class="copy-code-btn" onclick="window._acopy(this)">Copy</button></div><pre><code>'+esc(code.trim())+'</code></pre></div>';
       blocks.push(cb);return '~~C'+i+'~~';
     });
-    text=text.replace(iRe,function(_,c){return '<span class="inline-code">'+esc(c)+'</span>';});
+    var iblocks=[];
+    text=text.replace(iRe,function(_,c){var j=iblocks.length;iblocks.push('<span class="inline-code">'+esc(c)+'</span>');return '~~I'+j+'~~';});
     text=esc(text);
     text=text.replace(/^### (.+)$/gm,'<h3>$1</h3>');
     text=text.replace(/^## (.+)$/gm,'<h2>$1</h2>');
@@ -296,6 +297,7 @@
     text=text.replace(/^---$/gm,'<hr>');
     text=text.split('\n\n').map(function(p){p=p.trim();if(!p)return '';if(/^<[hHuUoObBpHR]/.test(p))return p;return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('\n');
     blocks.forEach(function(b,i){text=text.replace('~~C'+i+'~~',b);});
+    iblocks.forEach(function(b,i){text=text.replace('~~I'+i+'~~',b);});
     return text;
   }
   window._acopy=function(btn){
