@@ -366,20 +366,13 @@
   // Call AI
   function callAI(messages,onDone,onErr){
     abortCtrl=new AbortController();
-    var parts=messages.map(function(m){return(m.role==='user'?'User':'Assistant')+': '+m.content;}).join('
-');
-    var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'
-
-'+parts+'
-Assistant:')+'?model=openai&seed='+Math.floor(Math.random()*99999);
+    var parts=messages.map(function(m){return(m.role==='user'?'User':'Assistant')+': '+m.content;}).join('\n');
+    var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+'?model=openai&seed='+Math.floor(Math.random()*99999);
     fetch(url,{signal:abortCtrl.signal}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
     .then(function(txt){
       var clean=txt.trim();
-      var s1=clean.indexOf('
----
-');if(s1>0)clean=clean.substring(0,s1).trim();
-      var s2=clean.indexOf('
-Support Pollinations');if(s2>0)clean=clean.substring(0,s2).trim();
+      var s1=clean.indexOf('\n---\n');if(s1>0)clean=clean.substring(0,s1).trim();
+      var s2=clean.indexOf('\nSupport Pollinations');if(s2>0)clean=clean.substring(0,s2).trim();
       onDone(clean);
     }).catch(function(e){if(e.name==='AbortError')onDone(null);else onErr(e);});
   }
@@ -506,14 +499,7 @@ Support Pollinations');if(s2>0)clean=clean.substring(0,s2).trim();
   // Export
   el('exportBtn').addEventListener('click',function(){
     if(!hist.length)return showToast('Nothing to export yet');
-    var text='# Aura AI Chat Export
-
-'+hist.map(function(m){return (m.role==='user'?'**You:**':'**Aura AI:**')+'
-'+m.content;}).join('
-
----
-
-');
+    var text='# Aura AI Chat Export\n\n'+hist.map(function(m){return (m.role==='user'?'**You:**':'**Aura AI:**')+'\n'+m.content;}).join('\n\n---\n\n');
     var blob=new Blob([text],{type:'text/plain'});
     var a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download='aura-chat-'+Date.now()+'.md';a.click();showToast('Chat exported!');
