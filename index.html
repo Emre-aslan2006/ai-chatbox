@@ -215,7 +215,7 @@
     var parts=messages.map(function(m){return(m.role==="user"?"User":"Assistant")+": "+m.content;}).join("\n");
     var url="https://text.pollinations.ai/"+encodeURIComponent(SYS+"\n\n"+parts+"\nAssistant:")+"?model=openai&seed="+Math.floor(Math.random()*99999);
     fetch(url).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text();})
-    .then(function(txt){cb(null,txt.trim());}).catch(function(e){cb(e,null);});
+    .then(function(txt){var clean=txt.trim();var sep=clean.indexOf("\n---\n");if(sep>0)clean=clean.substring(0,sep).trim();cb(null,clean);}).catch(function(e){cb(e,null);});
   }
   function send(){
     var text=ui.value.trim();if(!text)return;
