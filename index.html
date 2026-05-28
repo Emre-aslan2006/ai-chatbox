@@ -252,7 +252,7 @@
 (function(){
   var THEME_KEY='aura_theme',CHATS_KEY='aura_chats_v2';
   var hist=[],chats=[],cid='',abortCtrl=null,generating=false,activeCtxId=null,codeMode=false,toastTimer=null;
-  var SYS='You are Aura AI, a brilliant and helpful AI assistant. Respond naturally, helpfully, and thoroughly. Use markdown formatting when useful: headers, bullet points, bold text, code blocks with language tags. For code always use fenced code blocks.';
+  var SYS='You are Aura AI, a helpful and knowledgeable AI assistant. Give clear, well-structured responses in natural flowing prose. Use **bold** for key terms. Use numbered lists or bullet points only when listing steps or items, not for normal explanations. Use headers (##) only for long multi-section answers. For code always use fenced code blocks with language tags. Be concise yet thorough. Never use excessive tables or over-formatted output for conversational questions.';
   function el(id){return document.getElementById(id);}
   var wrap=el('messagesWrap'),inner=el('messagesInner'),welcome=el('welcomeScreen');
   var typingEl=el('typingIndicator'),userInput=el('userInput'),sendBtn=el('sendBtn');
@@ -369,7 +369,7 @@
   function callAI(messages,onDone,onErr){
     abortCtrl=new AbortController();
     var parts=messages.map(function(m){return(m.role==='user'?'User':'Assistant')+': '+m.content;}).join('\n');
-    var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+'?model=openai&seed='+Math.floor(Math.random()*99999);
+    var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+'?model=openai-large&seed='+Math.floor(Math.random()*99999);
     fetch(url,{signal:abortCtrl.signal}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
     .then(function(txt){
       var clean=txt.trim();
