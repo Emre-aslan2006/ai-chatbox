@@ -19,8 +19,6 @@
     }
     html,body { height:100%; overflow:hidden; }
     body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--text); display:flex; height:100vh; }
-
-    /* SIDEBAR */
     .sidebar { width:260px; min-width:260px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
     .sidebar-header { padding:20px 16px 16px; border-bottom:1px solid var(--border); }
     .logo { display:flex; align-items:center; gap:10px; margin-bottom:16px; text-decoration:none; }
@@ -34,7 +32,6 @@
     .nav-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; cursor:pointer; font-size:14px; font-weight:500; color:var(--text2); transition:all 0.15s; }
     .nav-item:hover { background:rgba(255,255,255,0.05); color:var(--text); }
     .nav-item.active { background:rgba(139,92,246,0.15); color:var(--purple2); }
-    .nav-item .icon { font-size:16px; width:20px; text-align:center; }
     .section-label { font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text3); padding:8px 12px 4px; }
     .chat-history { flex:1; overflow-y:auto; padding:0 8px 8px; }
     .chat-history::-webkit-scrollbar { width:4px; }
@@ -43,22 +40,18 @@
     .history-item:hover { background:rgba(255,255,255,0.05); color:var(--text); }
     .history-item.active { background:rgba(139,92,246,0.12); color:var(--text); }
     .user-area { padding:12px 16px; border-top:1px solid var(--border); display:flex; align-items:center; gap:10px; }
-    .user-avatar { width:32px; height:32px; background:linear-gradient(135deg,var(--purple),var(--pink)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+    .user-avatar { width:32px; height:32px; background:linear-gradient(135deg,var(--purple),var(--pink)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; cursor:pointer; }
     .user-info { flex:1; min-width:0; }
     .user-name { font-size:13px; font-weight:600; }
     .user-plan { font-size:11px; color:var(--text3); }
-
-    /* MAIN */
     .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
     .chat-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--bg2); }
     .chat-title { flex:1; font-size:14px; font-weight:600; }
-    .status-dot { width:8px; height:8px; background:var(--green); border-radius:50%; box-shadow:0 0 8px var(--green); animation:blink 2s infinite; }
+    .status-dot { width:8px; height:8px; background:var(--green); border-radius:50%; box-shadow:0 0 8px var(--green); animation:blink 2s infinite; flex-shrink:0; }
     @keyframes blink { 0%,100%{opacity:1}50%{opacity:.4} }
     .status-text { font-size:12px; color:var(--text2); }
     .header-btn { padding:7px 14px; border:1px solid var(--border2); border-radius:8px; background:transparent; color:var(--text2); font-size:12px; font-weight:500; cursor:pointer; transition:all 0.15s; }
     .header-btn:hover { background:rgba(255,255,255,0.05); color:var(--text); }
-
-    /* MESSAGES */
     .messages-container { flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:4px; scroll-behavior:smooth; }
     .messages-container::-webkit-scrollbar { width:5px; }
     .messages-container::-webkit-scrollbar-thumb { background:var(--surface2); border-radius:4px; }
@@ -80,16 +73,12 @@
     .msg-group:hover .msg-actions { opacity:1; }
     .msg-action-btn { padding:4px 8px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--text2); font-size:11px; cursor:pointer; transition:all .15s; }
     .msg-action-btn:hover { background:var(--surface2); color:var(--text); }
-
-    /* Markdown */
     .msg-bubble.ai strong { color:var(--purple2); font-weight:600; }
     .msg-bubble.ai em { color:var(--cyan); font-style:italic; }
     .msg-bubble.ai code { background:rgba(139,92,246,.15); border:1px solid rgba(139,92,246,.2); border-radius:4px; padding:1px 5px; font-size:13px; }
     .msg-bubble.ai pre { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; margin:8px 0; overflow-x:auto; }
     .msg-bubble.ai ul { margin:6px 0 6px 18px; }
     .msg-bubble.ai li { margin-bottom:3px; }
-
-    /* TYPING */
     .typing-indicator { display:none; align-items:center; gap:10px; padding:0 20px 8px; }
     .typing-indicator.visible { display:flex; }
     .typing-avatar { width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,var(--purple3),var(--cyan)); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
@@ -97,8 +86,6 @@
     .typing-dot { width:7px; height:7px; background:var(--purple2); border-radius:50%; animation:tdot 1.3s ease-in-out infinite; }
     .typing-dot:nth-child(2){animation-delay:.15s}.typing-dot:nth-child(3){animation-delay:.3s}
     @keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1} }
-
-    /* WELCOME */
     .welcome-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:24px; padding:40px 20px; text-align:center; min-height:300px; }
     .welcome-logo { width:72px; height:72px; background:linear-gradient(135deg,var(--purple3),var(--cyan)); border-radius:22px; display:flex; align-items:center; justify-content:center; font-size:36px; box-shadow:0 0 40px rgba(139,92,246,.4); animation:float 4s ease-in-out infinite; }
     @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)} }
@@ -110,8 +97,6 @@
     .suggestion-icon { font-size:20px; flex-shrink:0; }
     .sg-title { display:block; color:var(--text); font-weight:600; font-size:14px; margin-bottom:2px; }
     .sg-sub { font-size:13px; color:var(--text2); }
-
-    /* INPUT */
     .input-area { padding:16px 20px 20px; background:var(--bg2); border-top:1px solid var(--border); }
     .quick-actions { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
     .quick-btn { padding:5px 12px; background:var(--surface); border:1px solid var(--border); border-radius:20px; color:var(--text2); font-size:12px; font-weight:500; cursor:pointer; transition:all .15s; white-space:nowrap; }
@@ -131,36 +116,26 @@
   </style>
 </head>
 <body>
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar">
   <div class="sidebar-header">
-    <a href="#" class="logo">
-      <div class="logo-icon">✨</div>
-      <span class="logo-text">Aura <span>AI</span></span>
-    </a>
-    <button class="new-chat-btn" id="newChatBtn">
-      <span>+</span> New Chat
-    </button>
+    <a href="#" class="logo"><div class="logo-icon">✨</div><span class="logo-text">Aura <span>AI</span></span></a>
+    <button class="new-chat-btn" id="newChatBtn">+ New Chat</button>
   </div>
   <nav class="sidebar-nav">
-    <div class="nav-item active" id="navChat"><span class="icon">💬</span> Chat</div>
-    <div class="nav-item" id="navCreate"><span class="icon">✨</span> AI Creation</div>
-    <div class="nav-item" id="navBots"><span class="icon">🤖</span> Bots</div>
+    <div class="nav-item active" id="navChat"><span style="font-size:16px;width:20px;text-align:center">💬</span> Chat</div>
+    <div class="nav-item"><span style="font-size:16px;width:20px;text-align:center">✨</span> AI Creation</div>
+    <div class="nav-item"><span style="font-size:16px;width:20px;text-align:center">🤖</span> Bots</div>
   </nav>
-  <div class="chat-history" id="chatHistory">
-    <div class="section-label">Recent Chats</div>
-  </div>
+  <div class="chat-history" id="chatHistory"><div class="section-label">Recent Chats</div></div>
   <div class="user-area">
-    <div class="user-avatar" id="userAvatar">E</div>
-    <div class="user-info">
-      <div class="user-name" id="userName">Emre Aslan</div>
-      <div class="user-plan">★ Free Plan</div>
-    </div>
+    <div class="user-avatar" id="userAvatar" title="Click to change name">E</div>
+    <div class="user-info"><div class="user-name" id="userName">Emre Aslan</div><div class="user-plan">★ Free Plan</div></div>
   </div>
 </aside>
 <main class="main">
   <div class="chat-header">
     <div class="status-dot"></div>
-    <div class="status-text">Powered by Aura AI</div>
+    <span class="status-text">Powered by Aura AI</span>
     <div class="chat-title" id="chatTitleHeader">New Chat</div>
     <button class="header-btn">🔗 Share</button>
     <button class="header-btn" id="editBtn">✏️ Edit</button>
@@ -172,207 +147,161 @@
         <div class="welcome-title">Hello, I'm Aura AI</div>
         <div class="welcome-sub">Your intelligent companion for coding, writing, analysis, and creative tasks. What would you like to explore today?</div>
       </div>
-      <div class="suggestions-grid">
-        <div class="suggestion-card" data-suggest="Help me write a creative short story">
-          <span class="suggestion-icon">✍️</span>
-          <div><span class="sg-title">Creative Writing</span><span class="sg-sub">Help me craft a story</span></div>
-        </div>
-        <div class="suggestion-card" data-suggest="Explain quantum computing in simple terms">
-          <span class="suggestion-icon">🔬</span>
-          <div><span class="sg-title">Explain a concept</span><span class="sg-sub">Break down complex ideas</span></div>
-        </div>
-        <div class="suggestion-card" data-suggest="Review this code: function add(a,b){return a+b} and suggest improvements">
-          <span class="suggestion-icon">💻</span>
-          <div><span class="sg-title">Code Review</span><span class="sg-sub">Debug or improve code</span></div>
-        </div>
-        <div class="suggestion-card" data-suggest="Help me brainstorm startup ideas in tech">
-          <span class="suggestion-icon">💡</span>
-          <div><span class="sg-title">Brainstorm</span><span class="sg-sub">Generate creative ideas</span></div>
-        </div>
+      <div class="suggestions-grid" id="sugGrid">
+        <div class="suggestion-card" data-suggest="Help me write a creative short story"><span class="suggestion-icon">✍️</span><div><span class="sg-title">Creative Writing</span><span class="sg-sub">Help me craft a story</span></div></div>
+        <div class="suggestion-card" data-suggest="Explain quantum computing in simple terms"><span class="suggestion-icon">🔬</span><div><span class="sg-title">Explain a concept</span><span class="sg-sub">Break down complex ideas</span></div></div>
+        <div class="suggestion-card" data-suggest="Review this code and suggest improvements: function add(a,b) { return a+b }"><span class="suggestion-icon">💻</span><div><span class="sg-title">Code Review</span><span class="sg-sub">Debug or improve code</span></div></div>
+        <div class="suggestion-card" data-suggest="Help me brainstorm startup ideas in tech"><span class="suggestion-icon">💡</span><div><span class="sg-title">Brainstorm</span><span class="sg-sub">Generate creative ideas</span></div></div>
       </div>
     </div>
   </div>
   <div class="typing-indicator" id="typingIndicator">
     <div class="typing-avatar">✨</div>
-    <div class="typing-bubble">
-      <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
-    </div>
+    <div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
   </div>
   <div class="input-area">
     <div class="quick-actions" id="quickActions">
       <button class="quick-btn" data-suggest="Translate to Spanish: Hello, how are you today?">🌐 Translate</button>
       <button class="quick-btn" data-suggest="Help me write a professional email">✏️ Writing</button>
-      <button class="quick-btn" data-suggest="Summarize AI advancements in 2024">📋 Summarize</button>
+      <button class="quick-btn" data-suggest="Summarize the main AI advancements in 2024">📋 Summarize</button>
       <button class="quick-btn" data-suggest="Explain how neural networks work">💬 Explain</button>
-      <button class="quick-btn" data-suggest="Debug this JavaScript: console.log(x) where x is undefined">🐛 Debug</button>
+      <button class="quick-btn" data-suggest="Debug this JavaScript: console.log(x) where x is not defined">🐛 Debug</button>
       <button class="quick-btn" id="moreBtn">⋯ More</button>
     </div>
     <div class="input-box">
       <textarea id="userInput" placeholder="Ask Aura anything..." rows="1"></textarea>
-      <button class="send-btn" id="sendBtn" title="Send">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
+      <button class="send-btn" id="sendBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </div>
     <div class="input-hint"><kbd>Shift</kbd> + <kbd>Enter</kbd> for new line &middot; <kbd>Enter</kbd> to send</div>
   </div>
 </main>
-<div class="copied-toast" id="copiedToast">Copied to clipboard!</div>
+<div class="copied-toast" id="copiedToast">Copied!</div>
+
 <script>
-  // ===== STATE =====
-  var conversations = {};
-  var currentConvId = null;
-  var isTyping = false;
-  var messageCount = 0;
-  var lastUserMsg = "";
+  var conversations = {}, currentConvId = null, isTyping = false, messageCount = 0, lastUserMsg = "";
 
-  function nowTime() {
-    return new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
-  }
+  function nowTime() { return new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}); }
 
-  // ===== SMART RESPONSES =====
+  // ===== SMART RESPONSE ENGINE =====
   function getResponse(input) {
     var t = input.toLowerCase().trim();
-
     // Greetings
-    if (/^(hey|hi|hello|sup|yo|hiya|howdy|greetings)/.test(t) && t.length < 40) {
-      var g = ["Hey! 👋 Great to have you here. What can I help you with today?",
-               "Hi there! How can I help?",
-               "Hello! I'm Aura, ready to assist. What's on your mind?",
-               "Hey! 😄 What would you like to explore today?"];
+    if (/^(hey|hi|hello|sup|yo|hiya|howdy|greetings|good\s*(morning|afternoon|evening|night))/.test(t) && t.length < 40) {
+      var g = ["Hey! \uD83D\uDC4B Great to have you here. What can I help with today?","Hi there! How can I help you today?","Hello! I'm Aura, ready to assist. What's on your mind?","Hey! \uD83D\uDE04 What would you like to explore?"];
       return g[Math.floor(Math.random()*g.length)];
     }
-
     // How are you
-    if (/how are (you|u)|how.s it going/.test(t)) {
-      return "I'm doing great, thanks for asking! 😊 As an AI I don't have feelings exactly, but I'm running perfectly and ready to help. How are *you* doing?";
+    if (/how are (you|u|ya)|how.s it going|you okay|u ok/.test(t)) {
+      return "I'm doing great, thanks for asking! \uD83D\uDE0A As an AI I don't have feelings exactly, but I'm running perfectly and ready to help. How are *you* doing?";
     }
-
     // What are you
-    if (/what are you|who are (you|u)|tell me about yourself/.test(t)) {
-      return "I'm **Aura AI** — an intelligent assistant built to help with coding, writing, research, creative projects, and much more. I aim to give real, useful answers rather than vague responses. What can I help you with?";
+    if (/what are you|who are (you|u)|tell me about yourself|what is aura/.test(t)) {
+      return "I'm **Aura AI** \u2014 an intelligent assistant built to help with coding, writing, research, creative projects, and much more. I give real, useful answers rather than vague responses. What can I help you with?";
     }
-
     // Who made you
-    if (/who (made|built|created|coded) (you|this|aura)/.test(t)) {
-      return "I was created by **Emre Aslan** 🚀 He built Aura AI to be a powerful yet friendly assistant. Is there something I can help you with today?";
+    if (/who (made|built|created|coded|programmed) (you|u|this|aura)|who.s (your|the) (creator|maker|developer|owner)/.test(t)) {
+      return "I was created by **Emre Aslan** \uD83D\uDE80 He built Aura AI to be a powerful yet friendly assistant. Is there something I can help you with today?";
     }
-
     // What can you do
-    if (/what can (you|u) do|your (skills|features|capabilities)/.test(t)) {
-      return "Here's what I can help with:\n\n- **💻 Coding** — write, debug, or explain code in any language\n- **✍️ Writing** — essays, emails, stories, summaries\n- **🔬 Research** — explain complex topics clearly\n- **💡 Brainstorming** — generate creative ideas\n- **🌍 Translation** — convert text between languages\n- **🧠 Analysis** — break down data or problems\n\nJust ask — no topic is too niche!";
+    if (/what can (you|u) do|your (skills|features|capabilities)|help me understand what you/.test(t)) {
+      return "Here's what I can help with:\n\n- **\uD83D\uDCBB Coding** \u2014 write, debug, or explain code in any language\n- **\u270D\uFE0F Writing** \u2014 essays, emails, stories, summaries\n- **\uD83D\uDD2C Research** \u2014 explain complex topics clearly\n- **\uD83D\uDCA1 Brainstorming** \u2014 generate creative ideas\n- **\uD83C\uDF0D Translation** \u2014 convert text between languages\n- **\uD83E\uDDE0 Analysis** \u2014 break down data or problems\n\nJust ask \u2014 no topic is too niche!";
     }
-
-    // Name / robot / AI
-    if (/your name|what.*called|are you (an )?ai|are you (a )?bot|are you (a )?human/.test(t)) {
-      if (/human/.test(t)) return "Nope, I'm an AI! 🤖 I'm **Aura AI** — your intelligent assistant. I try to be as helpful and natural as possible though!";
-      return "My name is **Aura AI**! Nice to meet you 😊 How can I help?";
+    // Name / AI / human / bot
+    if (/your name|what.*called|are you (an )?ai|are you (a )?bot|are you (a )?human|are you real/.test(t)) {
+      if (/human|real/.test(t)) return "Nope, I'm an AI! \uD83E\uDD16 I'm **Aura AI** \u2014 your intelligent assistant. I try to be as helpful and natural as possible though!";
+      return "My name is **Aura AI**! Nice to meet you \uD83D\uDE0A How can I help?";
     }
-
     // Age
     if (/how old (are you|r u)|your age/.test(t)) {
-      return "I don't have an age — I'm software! 😄 But I'm always learning. Think of me as perpetually young and curious.";
+      return "I don't have an age \u2014 I'm software! \uD83D\uDE04 But I'm always learning and improving. Think of me as perpetually young and curious.";
     }
-
     // Thank you
-    if (/^(thank|thx|ty|cheers|appreciate|great|awesome|perfect|nice one)/.test(t) && t.length < 50) {
-      var r = ["You're welcome! 😊 Happy to help anytime.", "Glad I could help!", "Anytime! That's what I'm here for 😄", "Happy to help! Feel free to ask anything else."];
+    if (/^(thank|thx|ty|cheers|appreciate|great job|awesome|perfect|nice one|well done)/.test(t) && t.length < 60) {
+      var r = ["You're welcome! \uD83D\uDE0A Happy to help anytime.","Glad I could help!","Anytime! That's what I'm here for \uD83D\uDE04","Happy to help! Feel free to ask anything else."];
       return r[Math.floor(Math.random()*r.length)];
     }
-
     // Bye
-    if (/^(bye|goodbye|see ya|take care|later|cya)/.test(t) && t.length < 30) {
-      return "Goodbye! 👋 It was great chatting. Come back anytime!";
+    if (/^(bye|goodbye|see ya|take care|later|cya|ttyl|gotta go)/.test(t) && t.length < 35) {
+      return "Goodbye! \uD83D\uDC4B It was great chatting. Come back anytime!";
     }
-
     // Joke
     if (/joke|funny|make me laugh/.test(t)) {
-      var j = ["Why do programmers prefer dark mode? Because light attracts bugs! 😄",
-               "Why was the JavaScript dev sad? He didn't know how to null his feelings. 😭",
-               "I told my computer I needed a break. Now it won't stop sending vacation ads. 💻",
-               "Why do AI assistants never get lost? We always follow the algorithm. 😄"];
+      var j = ["Why do programmers prefer dark mode? Because light attracts bugs! \uD83D\uDE04","Why was the JavaScript dev sad? He didn't know how to null his feelings. \uD83D\uDE2D","I told my computer I needed a break. Now it won't stop sending vacation ads. \uD83D\uDCBB"];
       return j[Math.floor(Math.random()*j.length)];
     }
-
     // Love
-    if (/i love you|do you love|are you my friend/.test(t)) {
-      return "That's sweet! 😊 While I'm an AI and can't love the way humans do, I genuinely care about every conversation. What can I do for you?";
+    if (/i love you|do you love me|are you my friend/.test(t)) {
+      return "That's sweet! \uD83D\uDE0A While I'm an AI, I genuinely care about every conversation. What can I do for you today?";
     }
-
     // Time / date
-    if (/what time|what.*date|today.s date/.test(t)) {
+    if (/what time|current time|what.*date|today.s date/.test(t)) {
       return "It's currently **" + new Date().toLocaleTimeString() + "** on **" + new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"}) + "**.";
     }
-
     // Math
-    if (/^[\d\s+\-*\/().]+$/.test(t) && t.length < 50) {
+    if (/^[\d\s+\-*\/().]+$/.test(t.replace(/\s/g,"")) && t.length < 60 && /\d/.test(t)) {
       try {
-        var result = Function("return (" + t + ")")();
-        if (typeof result === "number") return "✨ " + t + " = **" + result + "**";
+        var result = Function("return (" + t.replace(/[^\d+\-*\/().\s]/g,"") + ")")();
+        if (typeof result === "number" && isFinite(result)) return "\u2728 " + t.trim() + " = **" + result + "**";
       } catch(e) {}
     }
-
     // Weather
     if (/weather|temperature|will it rain|forecast/.test(t)) {
-      return "I don't have live weather data, but I'd recommend checking **weather.com** or searching your city + weather for accurate forecasts!";
+      return "I don't have live weather data, but check **weather.com** or search your city + weather for accurate forecasts!";
     }
-
     // Code
-    if (/write (a |some )?(code|function|script|program)|how (to |do i )?(code|build|create|make)|debug|fix (this|my|the) (code|bug)/.test(t)) {
-      return "I'd love to help with that! 💻 Please share the details — what language, what it should do, and any existing code. I'll write or fix it for you.";
+    if (/write (a |some )?(code|function|script|program|class)|how (to |do i )?(code|build|create|make|program)|debug|fix (this|my|the) (code|bug|error)/.test(t)) {
+      return "I'd love to help with that! \uD83D\uDCBB Please share the details \u2014 what language, what it should do, and any existing code. I'll write or fix it for you.";
     }
-
     // Explain
-    if (/^(what is|what are|explain|how does|how do|why is|tell me about|describe) /.test(t)) {
-      var topic = input.replace(/^(what is|what are|explain|how does|how do|why is|tell me about|describe) /i, "").trim();
-      if (topic.length < 2) return "What topic would you like me to explain? 😊";
-      return "Great question about **" + topic + "**! This is a fascinating subject. The core idea is that it involves key principles that work together in interesting ways. Would you like me to dive deeper into any specific aspect?";
+    if (/^(what is|what are|explain|how does|how do|why is|why does|tell me about|describe) /.test(t)) {
+      var topic = input.replace(/^(what is|what are|explain|how does|how do|why is|why does|tell me about|describe) /i,"").replace(/\?/g,"").trim();
+      if (topic.length < 2) return "What topic would you like me to explain? \uD83D\uDE0A";
+      return "Great question about **" + topic + "**! This is a fascinating subject. The core idea involves key principles and mechanisms that work together in interesting ways. Want me to dive deeper into any specific aspect?";
     }
-
     // Write
-    if (/write (a|an|my)|help me write|draft (a|an)/.test(t)) {
-      return "Happy to help you write that! ✍️ Tell me more — what tone, length, or style do you want? Any key points to include?";
+    if (/write (a|an|my|the)|help me write|draft (a|an)|create (a|an)/.test(t)) {
+      return "Happy to help you write that! \u270D\uFE0F Tell me more \u2014 what tone, length, or style do you want? Any key points to include?";
     }
-
-    // Yes / No / Ok
-    if (/^(yes|yeah|yep|sure|ok|okay|alright|no|nope|nah)$/.test(t)) {
-      var a = ["Got it! What would you like to do next?", "Understood! Anything else I can help with?", "Perfect! Let me know what you need."];
+    // Summarize
+    if (/summarize|tldr|sum up|give me a summary/.test(t)) {
+      return "Sure! \uD83D\uDCCB Please paste the text you'd like me to summarize and I'll give you a clear, concise breakdown.";
+    }
+    // Yes / No
+    if (/^(yes|yeah|yep|sure|ok|okay|alright|no|nope|nah|not really)$/.test(t)) {
+      var a = ["Got it! What would you like to do next?","Understood! Anything else I can help with?","Perfect! Let me know what you need."];
       return a[Math.floor(Math.random()*a.length)];
     }
-
     // Default
     var d = [
-      "That's interesting! Could you give me a bit more context so I can give you the best possible answer? 🤔",
-      "I hear you! To help properly, could you expand on that a little? The more detail you give, the better I can tailor my response.",
-      "Tell me more — what specific outcome are you looking for? 🎯",
-      "Good question! Could you clarify what you need? I want to make sure I give you exactly the right help."
+      "That's interesting! Could you give me a bit more context so I can give you the best answer? \uD83E\uDD14",
+      "I hear you! To help properly, could you expand on that a little? The more detail, the better my response.",
+      "Tell me more \u2014 what specific outcome are you looking for? \uD83C\uDFAF",
+      "Good question! Could you clarify what you need? I want to give you exactly the right help."
     ];
     return d[Math.floor(Math.random()*d.length)];
   }
 
-  // ===== MARKDOWN =====
+  // ===== MARKDOWN & HTML =====
   function md(text) {
     return text
       .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-      .replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>")
-      .replace(/`([^`]+)`/g, "<code>$1</code>")
-      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*([^*]+)\*/g, "<em>$1</em>")
-      .replace(/^- (.+)/gm, "<li>$1</li>")
-      .replace(/(<li>(?:.*\n?)*?<\/li>)/g, "<ul>$1</ul>")
+      .replace(/```([\s\S]*?)```/g,"<pre><code>$1</code></pre>")
+      .replace(/`([^`]+)`/g,"<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>")
+      .replace(/\*([^*]+)\*/g,"<em>$1</em>")
+      .replace(/^- (.+)/gm,"<li>$1</li>")
       .replace(/\n\n/g,"<br><br>")
       .replace(/\n/g,"<br>");
   }
-
   function escHtml(s) {
     return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
   }
 
-  // ===== CONVERSATION =====
+  // ===== CONVERSATIONS =====
   function createConv(title) {
-    var id = "c" + Date.now();
+    var id = "c"+Date.now();
     conversations[id] = {id:id, title:title||"New Chat", messages:[], created:Date.now()};
     return id;
   }
@@ -380,95 +309,87 @@
   function renderHistory() {
     var hist = document.getElementById("chatHistory");
     hist.innerHTML = '<div class="section-label">Recent Chats</div>';
-    var keys = Object.keys(conversations).reverse();
-    for (var i=0; i<keys.length; i++) {
-      var conv = conversations[keys[i]];
+    Object.keys(conversations).reverse().forEach(function(k) {
+      var c = conversations[k];
       var el = document.createElement("div");
-      el.className = "history-item" + (conv.id===currentConvId?" active":"");
-      el.setAttribute("data-id", conv.id);
-      el.innerHTML = "💬 " + conv.title;
-      el.addEventListener("click", (function(id){return function(){loadConv(id);};})(conv.id));
+      el.className = "history-item" + (c.id===currentConvId?" active":"");
+      el.textContent = "\uD83D\uDCAC " + c.title;
+      el.addEventListener("click", (function(id){ return function(){ loadConv(id); }; })(c.id));
       hist.appendChild(el);
-    }
+    });
   }
 
   function loadConv(id) {
     currentConvId = id;
-    var conv = conversations[id];
+    var c = conversations[id];
     var mc = document.getElementById("messagesContainer");
     mc.innerHTML = "";
-    for (var i=0; i<conv.messages.length; i++) {
-      renderMsg(conv.messages[i].role, conv.messages[i].text, conv.messages[i].time, false);
-    }
+    messageCount = c.messages.length;
+    c.messages.forEach(function(m){ renderMsg(m.role, m.text, m.time, false); });
     mc.scrollTop = mc.scrollHeight;
-    document.getElementById("chatTitleHeader").textContent = conv.title;
+    document.getElementById("chatTitleHeader").textContent = c.title;
     renderHistory();
   }
 
   // ===== RENDER MESSAGE =====
   function renderMsg(role, text, time, animate) {
-    if (animate===undefined) animate=true;
+    if (animate === undefined) animate = true;
     var mc = document.getElementById("messagesContainer");
     var ws = document.getElementById("welcomeScreen");
     if (ws) ws.remove();
 
-    var isUser = role==="user";
+    var isUser = (role === "user");
     var group = document.createElement("div");
     group.className = "msg-group";
     if (!animate) group.style.animation = "none";
 
-    var avatarLetter = isUser ? (document.getElementById("userAvatar").textContent||"E") : "✨";
-    var avatarClass = isUser ? "user-av" : "ai";
+    var avatarLetter = isUser ? (document.getElementById("userAvatar").textContent || "E") : "\u2728";
     var bubbleClass = isUser ? "user" : "ai";
     var rowClass = isUser ? "msg-row user" : "msg-row";
     var sender = isUser ? "You" : "Aura AI";
     var content = isUser ? escHtml(text) : md(text);
 
-    var actionsHtml = isUser ? "" :
-      '<div class="msg-actions">' +
-      '<button class="msg-action-btn copy-btn">📋 Copy</button>' +
-      '<button class="msg-action-btn regen-btn">🔄 Regen</button>' +
-      '<button class="msg-action-btn like-btn">👍</button>' +
-      '<button class="msg-action-btn dislike-btn">👎</button>' +
-      '</div>';
+    var html = '<div class="'+rowClass+'">'+
+      '<div class="msg-avatar '+( isUser ? "user-av" : "ai" )+ '">'+avatarLetter+'</div>'+
+      '<div class="msg-content">'+
+      '<div class="msg-sender">'+sender+'</div>'+
+      '<div class="msg-bubble '+bubbleClass+'">'+content+'</div>'+
+      '<div class="msg-time">'+time+'</div>'+
+      '</div></div>';
+    if (!isUser) {
+      html += '<div class="msg-actions">'+
+        '<button class="msg-action-btn copy-btn">\uD83D\uDCCB Copy</button>'+
+        '<button class="msg-action-btn regen-btn">\uD83D\uDD04 Regen</button>'+
+        '<button class="msg-action-btn like-btn">\uD83D\uDC4D</button>'+
+        '<button class="msg-action-btn dislike-btn">\uD83D\uDC4E</button>'+
+        '</div>';
+    }
+    group.innerHTML = html;
 
-    group.innerHTML =
-      '<div class="' + rowClass + '">' +
-      '  <div class="msg-avatar ' + avatarClass + '">' + avatarLetter + '</div>' +
-      '  <div class="msg-content">' +
-      '    <div class="msg-sender">' + sender + '</div>' +
-      '    <div class="msg-bubble ' + bubbleClass + '">' + content + '</div>' +
-      '    <div class="msg-time">' + time + '</div>' +
-      '  </div>' +
-      '</div>' +
-      actionsHtml;
-
-    // Bind action buttons
-    var copyBtn = group.querySelector(".copy-btn");
-    if (copyBtn) copyBtn.addEventListener("click", function(){
-      var bubble = group.querySelector(".msg-bubble");
-      navigator.clipboard.writeText(bubble.innerText).then(function(){showToast();}).catch(function(){});
+    var cb = group.querySelector(".copy-btn");
+    if (cb) cb.addEventListener("click", function(){
+      var b = group.querySelector(".msg-bubble");
+      navigator.clipboard.writeText(b.innerText).then(function(){ showToast(); }).catch(function(){});
     });
-    var regenBtn = group.querySelector(".regen-btn");
-    if (regenBtn) regenBtn.addEventListener("click", function(){ regenLast(); });
-    var likeBtn = group.querySelector(".like-btn");
-    if (likeBtn) likeBtn.addEventListener("click", function(){ this.textContent="👍✔"; this.style.color="#10b981"; });
-    var dislikeBtn = group.querySelector(".dislike-btn");
-    if (dislikeBtn) dislikeBtn.addEventListener("click", function(){ this.textContent="👎✔"; this.style.color="#ef4444"; });
+    var rb = group.querySelector(".regen-btn");
+    if (rb) rb.addEventListener("click", function(){ regenLast(); });
+    var lb = group.querySelector(".like-btn");
+    if (lb) lb.addEventListener("click", function(){ this.textContent="\uD83D\uDC4D\u2714"; this.style.color="#10b981"; });
+    var db = group.querySelector(".dislike-btn");
+    if (db) db.addEventListener("click", function(){ this.textContent="\uD83D\uDC4E\u2714"; this.style.color="#ef4444"; });
 
     mc.appendChild(group);
     mc.scrollTop = mc.scrollHeight;
   }
 
-  // ===== SEND =====
+  // ===== SEND MESSAGE =====
   function sendMsg() {
     var input = document.getElementById("userInput");
     var text = input.value.trim();
     if (!text || isTyping) return;
 
-    if (!currentConvId) {
-      currentConvId = createConv(text.substring(0,35)+(text.length>35?"...":""));
-    } else if (messageCount===0) {
+    if (!currentConvId) currentConvId = createConv(text.substring(0,35)+(text.length>35?"...":""));
+    else if (messageCount === 0) {
       conversations[currentConvId].title = text.substring(0,35)+(text.length>35?"...":"");
       document.getElementById("chatTitleHeader").textContent = conversations[currentConvId].title;
     }
@@ -476,9 +397,7 @@
     var t = nowTime();
     lastUserMsg = text;
     renderMsg("user", text, t);
-    if (conversations[currentConvId]) {
-      conversations[currentConvId].messages.push({role:"user",text:text,time:t});
-    }
+    if (conversations[currentConvId]) conversations[currentConvId].messages.push({role:"user",text:text,time:t});
     messageCount++;
     input.value = "";
     input.style.height = "auto";
@@ -489,8 +408,8 @@
   function regenLast() {
     if (!lastUserMsg) return;
     var mc = document.getElementById("messagesContainer");
-    var groups = mc.querySelectorAll(".msg-group");
-    if (groups.length) groups[groups.length-1].remove();
+    var gs = mc.querySelectorAll(".msg-group");
+    if (gs.length) gs[gs.length-1].remove();
     streamResp(lastUserMsg);
   }
 
@@ -499,19 +418,14 @@
     document.getElementById("sendBtn").disabled = true;
     var typing = document.getElementById("typingIndicator");
     typing.classList.add("visible");
-    var mc = document.getElementById("messagesContainer");
-    mc.scrollTop = mc.scrollHeight;
-
+    document.getElementById("messagesContainer").scrollTop = 99999;
     var response = getResponse(userText);
     var delay = Math.min(400 + response.length * 8, 2200);
-
-    setTimeout(function() {
+    setTimeout(function(){
       typing.classList.remove("visible");
       var t = nowTime();
       renderMsg("assistant", response, t);
-      if (currentConvId && conversations[currentConvId]) {
-        conversations[currentConvId].messages.push({role:"assistant",text:response,time:t});
-      }
+      if (currentConvId && conversations[currentConvId]) conversations[currentConvId].messages.push({role:"assistant",text:response,time:t});
       isTyping = false;
       document.getElementById("sendBtn").disabled = false;
     }, delay);
@@ -520,78 +434,76 @@
   function showToast() {
     var t = document.getElementById("copiedToast");
     t.classList.add("show");
-    setTimeout(function(){t.classList.remove("show");}, 2000);
+    setTimeout(function(){ t.classList.remove("show"); }, 2000);
   }
 
   function startNewChat() {
     currentConvId = createConv("New Chat");
     messageCount = 0;
-    var mc = document.getElementById("messagesContainer");
-    mc.innerHTML = '<div class="welcome-screen" id="welcomeScreen"><div class="welcome-logo">✨</div><div><div class="welcome-title">Hello, I\'m Aura AI</div><div class="welcome-sub">Your intelligent companion for coding, writing, analysis, and creative tasks. What would you like to explore today?</div></div><div class="suggestions-grid"><div class="suggestion-card" data-suggest="Help me write a creative short story"><span class="suggestion-icon">✍️</span><div><span class="sg-title">Creative Writing</span><span class="sg-sub">Help me craft a story</span></div></div><div class="suggestion-card" data-suggest="Explain quantum computing in simple terms"><span class="suggestion-icon">🔬</span><div><span class="sg-title">Explain a concept</span><span class="sg-sub">Break down complex ideas</span></div></div><div class="suggestion-card" data-suggest="Review this code and suggest improvements"><span class="suggestion-icon">💻</span><div><span class="sg-title">Code Review</span><span class="sg-sub">Debug or improve code</span></div></div><div class="suggestion-card" data-suggest="Help me brainstorm startup ideas in tech"><span class="suggestion-icon">💡</span><div><span class="sg-title">Brainstorm</span><span class="sg-sub">Generate creative ideas</span></div></div></div></div>';
+    lastUserMsg = "";
     document.getElementById("chatTitleHeader").textContent = "New Chat";
     document.getElementById("userInput").value = "";
-    // Rebind suggestion cards
+    var mc = document.getElementById("messagesContainer");
+    mc.innerHTML = '<div class="welcome-screen" id="welcomeScreen">'+
+      '<div class="welcome-logo">\u2728</div>'+
+      '<div><div class="welcome-title">Hello, I\'m Aura AI</div>'+
+      '<div class="welcome-sub">Your intelligent companion for coding, writing, analysis, and creative tasks. What would you like to explore today?</div></div>'+
+      '<div class="suggestions-grid" id="sugGrid">'+
+      '<div class="suggestion-card" data-suggest="Help me write a creative short story"><span class="suggestion-icon">\u270D\uFE0F</span><div><span class="sg-title">Creative Writing</span><span class="sg-sub">Help me craft a story</span></div></div>'+
+      '<div class="suggestion-card" data-suggest="Explain quantum computing in simple terms"><span class="suggestion-icon">\uD83D\uDD2C</span><div><span class="sg-title">Explain a concept</span><span class="sg-sub">Break down complex ideas</span></div></div>'+
+      '<div class="suggestion-card" data-suggest="Review this code: function add(a,b){return a+b}"><span class="suggestion-icon">\uD83D\uDCBB</span><div><span class="sg-title">Code Review</span><span class="sg-sub">Debug or improve code</span></div></div>'+
+      '<div class="suggestion-card" data-suggest="Help me brainstorm startup ideas in tech"><span class="suggestion-icon">\uD83D\uDCA1</span><div><span class="sg-title">Brainstorm</span><span class="sg-sub">Generate creative ideas</span></div></div>'+
+      '</div></div>';
     bindSuggestions();
     renderHistory();
   }
 
   function bindSuggestions() {
-    var cards = document.querySelectorAll(".suggestion-card");
-    for (var i=0; i<cards.length; i++) {
-      cards[i].addEventListener("click", (function(sug){return function(){
-        document.getElementById("userInput").value = sug;
-        sendMsg();
-      };})(cards[i].getAttribute("data-suggest")));
-    }
+    document.querySelectorAll(".suggestion-card").forEach(function(card) {
+      card.addEventListener("click", (function(s){ return function(){ document.getElementById("userInput").value=s; sendMsg(); }; })(card.getAttribute("data-suggest")));
+    });
   }
 
   // ===== INIT =====
   window.onload = function() {
     currentConvId = createConv("New Chat");
     renderHistory();
-
-    // Suggestion cards
     bindSuggestions();
 
     // Quick action buttons
-    var qBtns = document.querySelectorAll(".quick-btn[data-suggest]");
-    for (var i=0; i<qBtns.length; i++) {
-      qBtns[i].addEventListener("click", (function(sug){return function(){
-        document.getElementById("userInput").value = sug;
-        sendMsg();
-      };})(qBtns[i].getAttribute("data-suggest")));
-    }
-
-    // More button
-    var moreBtn = document.getElementById("moreBtn");
-    if (moreBtn) moreBtn.addEventListener("click", function(){
-      var qa = document.getElementById("quickActions");
-      qa.style.display = qa.style.display==="none"?"flex":"none";
+    document.querySelectorAll(".quick-btn[data-suggest]").forEach(function(btn) {
+      btn.addEventListener("click", (function(s){ return function(){ document.getElementById("userInput").value=s; sendMsg(); }; })(btn.getAttribute("data-suggest")));
     });
 
-    // New chat button
-    document.getElementById("newChatBtn").addEventListener("click", function(){ startNewChat(); });
+    document.getElementById("moreBtn").addEventListener("click", function(){
+      var qa = document.getElementById("quickActions");
+      qa.style.display = qa.style.display==="none" ? "flex" : "none";
+    });
 
-    // Send button
-    document.getElementById("sendBtn").addEventListener("click", function(){ sendMsg(); });
+    document.getElementById("newChatBtn").addEventListener("click", startNewChat);
+    document.getElementById("sendBtn").addEventListener("click", sendMsg);
 
-    // Edit button
     document.getElementById("editBtn").addEventListener("click", function(){
-      var name = prompt("Enter your name:", document.getElementById("userName").textContent);
-      if (name) {
-        document.getElementById("userName").textContent = name;
-        document.getElementById("userAvatar").textContent = name[0].toUpperCase();
+      var n = prompt("Enter your display name:", document.getElementById("userName").textContent);
+      if (n && n.trim()) {
+        document.getElementById("userName").textContent = n.trim();
+        document.getElementById("userAvatar").textContent = n.trim()[0].toUpperCase();
+      }
+    });
+    document.getElementById("userAvatar").addEventListener("click", function(){
+      var n = prompt("Enter your display name:", document.getElementById("userName").textContent);
+      if (n && n.trim()) {
+        document.getElementById("userName").textContent = n.trim();
+        document.getElementById("userAvatar").textContent = n.trim()[0].toUpperCase();
       }
     });
 
-    // Nav items
     document.getElementById("navChat").addEventListener("click", function(){
-      document.querySelectorAll(".nav-item").forEach(function(n){n.classList.remove("active");});
+      document.querySelectorAll(".nav-item").forEach(function(n){ n.classList.remove("active"); });
       this.classList.add("active");
       startNewChat();
     });
 
-    // Input enter key
     var inp = document.getElementById("userInput");
     inp.addEventListener("keydown", function(e){
       if (e.key==="Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
