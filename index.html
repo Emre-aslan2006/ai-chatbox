@@ -180,14 +180,20 @@
 <div class="copied-toast" id="copiedToast">Copied!</div>
 
 <script>
-var GEMINI_API_KEY = 'AIzaSyDGYMnJ01EOEHnjDHy2tcZmo9dgh2iBAbo';
-var GEMINI_MODEL = 'gemini-2.0-flash';
-var GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + GEMINI_API_KEY;
-var SYSTEM_INSTRUCTION = 'You are Aura AI - a smart, friendly, and genuinely helpful AI assistant built by Emre Aslan. Rules: Always give a relevant specific answer. Never use vague fallbacks. For casual chat respond naturally. For code give actual code. For facts give real answers.';
+var OR_API_KEY = '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';
+var OR_URL = 'https://openrouter.ai/api/v1/chat/completions';
+var OR_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
+
+var SYSTEM_PROMPT = 'You are Aura AI - a smart, friendly, and genuinely helpful AI assistant built by Emre Aslan. Respond naturally and directly to whatever the user says. For casual chat, be relaxed and friendly. For questions, give real answers. For code, give actual working code. For venting or emotions, be empathetic. Never give vague non-answers. Keep replies concise but helpful. Use markdown for formatting when useful.';
+
 var convs = JSON.parse(localStorage.getItem('aura_convs') || '[]');
 var currentId = null;
 var chatHistory = [];
-function nowTime() { return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+
+function nowTime() {
+  return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
 function md(t) {
   if (!t) return '';
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -198,41 +204,55 @@ function md(t) {
     .replace(/^-\s(.+)$/gm,'<li>$1</li>')
     .replace(/\n/g,'<br>');
 }
+
 function escHtml(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function saveConvs() { localStorage.setItem('aura_convs', JSON.stringify(convs)); }
-async function callGemini(userText) {
-  chatHistory.push({ role:'user', parts:[{ text:userText }] });
-  var res = await fetch(GEMINI_URL, {
-    method:'POST', headers:{'Content-Type':'application/json'},
+
+async function callAI(userText) {
+  chatHistory.push({ role: 'user', content: userText });
+
+  var messages = [{ role: 'system', content: SYSTEM_PROMPT }].concat(chatHistory);
+
+  var res = await fetch(OR_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + OR_API_KEY,
+      'HTTP-Referer': 'https://emre-aslan2006.github.io/ai-chatbox/',
+      'X-Title': 'Aura AI'
+    },
     body: JSON.stringify({
-      system_instruction: { parts:[{ text:SYSTEM_INSTRUCTION }] },
-      contents: chatHistory,
-      generationConfig: { temperature:0.9, topK:40, topP:0.95, maxOutputTokens:1500 },
-      safetySettings:[
-        {category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},
-        {category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},
-        {category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},
-        {category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}
-      ]
+      model: OR_MODEL,
+      messages: messages,
+      temperature: 0.9,
+      max_tokens: 1500
     })
   });
-  if (!res.ok) throw new Error('HTTP '+res.status+': '+(await res.text().catch(function(){return'';})).slice(0,200));
+
+  if (!res.ok) {
+    var errBody = await res.text().catch(function(){ return ''; });
+    throw new Error('HTTP ' + res.status + ': ' + errBody.slice(0, 300));
+  }
+
   var data = await res.json();
-  var reply = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+  var reply = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
   if (!reply) throw new Error('Empty response');
-  chatHistory.push({ role:'model', parts:[{ text:reply }] });
+
+  chatHistory.push({ role: 'assistant', content: reply });
   return reply;
 }
+
 function createConv(firstMsg) {
-  var id = 'conv_'+Date.now();
-  convs.unshift({ id:id, title:firstMsg.slice(0,50)+(firstMsg.length>50?'...':''), msgs:[], created:Date.now() });
+  var id = 'conv_' + Date.now();
+  convs.unshift({ id: id, title: firstMsg.slice(0,50) + (firstMsg.length > 50 ? '...' : ''), msgs: [], created: Date.now() });
   saveConvs(); return id;
 }
+
 function loadConv(id) {
   currentId = id;
-  var c = convs.find(function(x){ return x.id===id; });
+  var c = convs.find(function(x){ return x.id === id; });
   if (!c) return;
-  chatHistory = c.msgs.map(function(m){ return {role:m.role==='user'?'user':'model',parts:[{text:m.text}]}; });
+  chatHistory = c.msgs.map(function(m){ return { role: m.role === 'user' ? 'user' : 'assistant', content: m.text }; });
   var mc = document.getElementById('messagesContainer');
   mc.innerHTML = '';
   var w = document.getElementById('welcomeScreen');
@@ -242,25 +262,27 @@ function loadConv(id) {
   renderHistory();
   mc.scrollTop = mc.scrollHeight;
 }
+
 function renderHistory() {
   var el = document.getElementById('chatHistory');
   if (!el) return;
   el.innerHTML = '';
   convs.forEach(function(c) {
     var d = document.createElement('div');
-    d.className = 'history-item'+(c.id===currentId?' active':'');
-    d.innerHTML = '<span>&#128172;</span><span>'+escHtml(c.title)+'</span>';
+    d.className = 'history-item' + (c.id === currentId ? ' active' : '');
+    d.innerHTML = '<span>&#128172;</span><span>' + escHtml(c.title) + '</span>';
     d.onclick = function(){ loadConv(c.id); };
     el.appendChild(d);
   });
 }
+
 function renderMsg(role, text, time, animate) {
-  if (animate===undefined) animate=true;
+  if (animate === undefined) animate = true;
   var mc = document.getElementById('messagesContainer');
   var welcome = document.getElementById('welcomeScreen');
   if (welcome) welcome.style.display = 'none';
   mc.style.display = 'flex';
-  var isUser = role==='user';
+  var isUser = role === 'user';
   var g = document.createElement('div');
   g.className = 'msg-group';
   if (!animate) g.style.animation = 'none';
@@ -269,6 +291,7 @@ function renderMsg(role, text, time, animate) {
   mc.appendChild(g);
   mc.scrollTop = mc.scrollHeight;
 }
+
 async function sendMsg() {
   var ta = document.getElementById('userInput');
   var text = ta.value.trim();
@@ -277,68 +300,82 @@ async function sendMsg() {
   document.getElementById('sendBtn').disabled = true;
   if (!currentId) { currentId = createConv(text); chatHistory = []; }
   var time = nowTime();
-  var c = convs.find(function(x){ return x.id===currentId; });
-  c.msgs.push({role:'user', text:text, time:time}); saveConvs();
-  renderMsg('user', text, time); renderHistory();
+  var c = convs.find(function(x){ return x.id === currentId; });
+  c.msgs.push({ role: 'user', text: text, time: time });
+  saveConvs();
+  renderMsg('user', text, time);
+  renderHistory();
   var typing = document.getElementById('typingIndicator');
   typing.classList.add('visible');
   document.getElementById('messagesContainer').scrollTop = 99999;
   try {
-    var reply = await callGemini(text);
+    var reply = await callAI(text);
     var rt = nowTime();
     typing.classList.remove('visible');
-    c.msgs.push({role:'ai', text:reply, time:rt}); saveConvs();
+    c.msgs.push({ role: 'ai', text: reply, time: rt });
+    saveConvs();
     renderMsg('ai', reply, rt);
   } catch(err) {
     typing.classList.remove('visible');
     var et = nowTime();
     var msg = 'Sorry, something went wrong. Please try again.';
-    if (err.message.indexOf('HTTP 429')!==-1) msg = "You're sending too fast! Please wait a moment.";
-    else if (err.message.indexOf('HTTP 4')!==-1) msg = 'API error. Please try again shortly.';
-    else if (!navigator.onLine) msg = "You're offline. Check your connection.";
+    if (err.message.indexOf('HTTP 429') !== -1) msg = 'Too many requests - please wait a moment and try again.';
+    else if (err.message.indexOf('HTTP 4') !== -1) msg = 'API error. Please try again shortly.';
+    else if (!navigator.onLine) msg = "You appear to be offline. Check your connection.";
     console.error('[Aura AI]', err.message);
-    c.msgs.push({role:'ai', text:msg, time:et}); saveConvs();
+    c.msgs.push({ role: 'ai', text: msg, time: et });
+    saveConvs();
     renderMsg('ai', msg, et);
   }
-  document.getElementById('sendBtn').disabled = false; ta.focus();
+  document.getElementById('sendBtn').disabled = false;
+  ta.focus();
 }
+
 async function regenLast() {
   if (!currentId) return;
-  var c = convs.find(function(x){ return x.id===currentId; });
-  if (!c || c.msgs.length<2) return;
+  var c = convs.find(function(x){ return x.id === currentId; });
+  if (!c || c.msgs.length < 2) return;
   var mc = document.getElementById('messagesContainer');
   var groups = mc.querySelectorAll('.msg-group');
   if (groups.length) groups[groups.length-1].remove();
-  if (c.msgs[c.msgs.length-1].role==='ai') { c.msgs.pop(); if (chatHistory.length && chatHistory[chatHistory.length-1].role==='model') chatHistory.pop(); }
+  if (c.msgs[c.msgs.length-1].role === 'ai') {
+    c.msgs.pop();
+    if (chatHistory.length && chatHistory[chatHistory.length-1].role === 'assistant') chatHistory.pop();
+  }
   saveConvs();
   var lastUser = null;
-  for (var i=c.msgs.length-1; i>=0; i--) { if (c.msgs[i].role==='user') { lastUser=c.msgs[i]; break; } }
+  for (var i = c.msgs.length-1; i >= 0; i--) { if (c.msgs[i].role === 'user') { lastUser = c.msgs[i]; break; } }
   if (!lastUser) return;
-  if (chatHistory.length && chatHistory[chatHistory.length-1].role==='user') chatHistory.pop();
+  if (chatHistory.length && chatHistory[chatHistory.length-1].role === 'user') chatHistory.pop();
   var typing = document.getElementById('typingIndicator');
   typing.classList.add('visible');
   document.getElementById('sendBtn').disabled = true;
   try {
-    var reply = await callGemini(lastUser.text);
+    var reply = await callAI(lastUser.text);
     var rt = nowTime();
     typing.classList.remove('visible');
-    c.msgs.push({role:'ai', text:reply, time:rt}); saveConvs();
+    c.msgs.push({ role: 'ai', text: reply, time: rt });
+    saveConvs();
     renderMsg('ai', reply, rt);
-  } catch(err) { typing.classList.remove('visible'); renderMsg('ai', 'Regeneration failed. Please try again.', nowTime()); }
+  } catch(err) {
+    typing.classList.remove('visible');
+    renderMsg('ai', 'Regeneration failed. Please try again.', nowTime());
+  }
   document.getElementById('sendBtn').disabled = false;
 }
+
 function copyMsg(btn) {
   var bubble = btn.closest('.msg-group').querySelector('.msg-bubble');
   navigator.clipboard.writeText(bubble.innerText).then(function(){ showToast('Copied!'); });
 }
-function rateFn(btn, v) { showToast(v>0?'Thanks for the feedback!':'Got it, I will do better.'); }
+function rateFn(btn, v) { showToast(v > 0 ? 'Thanks for the feedback!' : "Got it, will do better!"); }
 function showToast(msg) {
   var t = document.getElementById('copiedToast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, 2200);
 }
 function startNewChat() {
-  currentId=null; chatHistory=[];
+  currentId = null; chatHistory = [];
   var mc = document.getElementById('messagesContainer');
   mc.innerHTML = ''; mc.style.display = 'none';
   var w = document.getElementById('welcomeScreen');
@@ -350,7 +387,7 @@ function bindSuggestions() {
   document.querySelectorAll('.suggestion-card').forEach(function(card) {
     card.onclick = function() {
       var ta = document.getElementById('userInput');
-      ta.value = (card.querySelector('.sg-title')||{}).textContent || '';
+      ta.value = (card.querySelector('.sg-title') || {}).textContent || '';
       ta.focus(); sendMsg();
     };
   });
@@ -361,13 +398,13 @@ document.addEventListener('DOMContentLoaded', function() {
   if (nb) nb.addEventListener('click', startNewChat);
   var ta = document.getElementById('userInput');
   if (ta) {
-    ta.addEventListener('keydown', function(e) { if (e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMsg(); } });
-    ta.addEventListener('input', function() { ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight,140)+'px'; });
+    ta.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
+    ta.addEventListener('input', function() { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 140) + 'px'; });
   }
   var sb = document.getElementById('sendBtn');
   if (sb) sb.addEventListener('click', sendMsg);
   document.querySelectorAll('.quick-btn').forEach(function(btn) {
-    btn.onclick = function() { var ta=document.getElementById('userInput'); ta.value=btn.textContent.trim(); ta.focus(); };
+    btn.onclick = function() { var ta = document.getElementById('userInput'); ta.value = btn.textContent.trim(); ta.focus(); };
   });
 });
 </script>
