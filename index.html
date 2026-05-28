@@ -4,1065 +4,1143 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aura AI — Intelligent Conversations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    
     :root {
-      --purple:        #6c63ff;
-      --purple-dark:   #5249d6;
-      --purple-mid:    #7c74ff;
-      --purple-light:  #a59fff;
-      --purple-glow:   rgba(108, 99, 255, 0.35);
-      --purple-soft:   rgba(108, 99, 255, 0.08);
-
-      --sidebar-bg:    #0d0d1a;
-      --sidebar-item:  rgba(255,255,255,0.05);
-      --sidebar-hover: rgba(108,99,255,0.14);
-      --sidebar-active:rgba(108,99,255,0.22);
-
-      --chat-bg:       #f4f5fb;
-      --card:          #ffffff;
-      --border:        #e4e7f0;
-      --border-focus:  var(--purple);
-
-      --text-1:        #1a1b2e;
-      --text-2:        #5b6270;
-      --text-3:        #9aa0b2;
-
-      --user-bubble:   linear-gradient(140deg, #6c63ff 0%, #9d96ff 100%);
-      --ai-bubble:     #ffffff;
-
-      --sidebar-w:     272px;
-      --header-h:      64px;
-      --input-area-h:  auto;
-
-      --radius-sm:     8px;
-      --radius:        14px;
-      --radius-lg:     20px;
-      --radius-xl:     28px;
-
-      --shadow-sm:     0 1px 4px rgba(0,0,0,0.06);
-      --shadow:        0 4px 20px rgba(0,0,0,0.08);
-      --shadow-purple: 0 6px 24px rgba(108,99,255,0.38);
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --bg3: #18181f;
+      --surface: #1e1e28;
+      --surface2: #252530;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.12);
+      --purple: #8b5cf6;
+      --purple2: #a78bfa;
+      --purple3: #7c3aed;
+      --blue: #3b82f6;
+      --cyan: #06b6d4;
+      --green: #10b981;
+      --pink: #ec4899;
+      --text: #f1f0f5;
+      --text2: #a09db8;
+      --text3: #6b6880;
+      --glow: rgba(139,92,246,0.3);
+      --glow2: rgba(139,92,246,0.15);
     }
 
-    html, body { height: 100%; }
+    html, body { height: 100%; overflow: hidden; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-      background: var(--chat-bg);
-      color: var(--text-1);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       display: flex;
-      overflow: hidden;
       height: 100vh;
     }
 
-    /* ══════════════════════════════════════════
-       SIDEBAR
-    ══════════════════════════════════════════ */
+    /* SIDEBAR */
     .sidebar {
-      width: var(--sidebar-w);
-      background: var(--sidebar-bg);
+      width: 260px;
+      min-width: 260px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      flex-shrink: 0;
-      transition: transform .28s cubic-bezier(.4,0,.2,1);
-      z-index: 200;
-      border-right: 1px solid rgba(255,255,255,0.04);
+      overflow: hidden;
+      transition: all 0.3s ease;
     }
 
-    /* Logo */
-    .sb-logo {
+    .sidebar-header {
+      padding: 20px 16px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 22px 18px 14px;
-      cursor: pointer;
-      user-select: none;
+      margin-bottom: 16px;
+      text-decoration: none;
     }
-    .sb-logo-icon {
-      width: 38px; height: 38px;
-      background: linear-gradient(140deg, var(--purple), var(--purple-mid));
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 19px;
-      box-shadow: var(--shadow-purple);
-      flex-shrink: 0;
-    }
-    .sb-logo-text { font-size: 19px; font-weight: 750; color: #fff; letter-spacing: -.6px; }
-    .sb-logo-text em { color: var(--purple-light); font-style: normal; }
 
-    /* New chat */
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 20px var(--glow);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px var(--glow); }
+      50% { box-shadow: 0 0 30px rgba(139,92,246,0.5), 0 0 60px rgba(6,182,212,0.2); }
+    }
+
+    .logo-text { font-size: 18px; font-weight: 700; }
+    .logo-text span { color: var(--purple2); }
+
     .new-chat-btn {
-      margin: 2px 14px 14px;
-      padding: 10px 16px;
-      background: linear-gradient(135deg, var(--purple) 0%, var(--purple-mid) 100%);
-      border: none; border-radius: var(--radius);
-      color: #fff; font-size: 13.5px; font-weight: 600;
+      width: 100%;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, var(--purple3), var(--purple));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
       display: flex; align-items: center; gap: 8px;
-      justify-content: center;
-      box-shadow: 0 4px 18px var(--purple-glow);
-      transition: all .2s ease;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px var(--glow2);
     }
-    .new-chat-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--purple-glow); }
+    .new-chat-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 25px var(--glow);
+    }
     .new-chat-btn:active { transform: translateY(0); }
-    .new-chat-btn svg { flex-shrink: 0; }
 
-    /* Nav */
-    .sb-nav { padding: 4px 10px; display: flex; flex-direction: column; gap: 2px; }
-    .sb-nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      color: #687080; font-size: 13.5px; font-weight: 500;
-      cursor: pointer;
-      transition: all .16s;
-    }
-    .sb-nav-item:hover { background: var(--sidebar-hover); color: var(--purple-light); }
-    .sb-nav-item.active { background: var(--sidebar-active); color: var(--purple-light); }
-    .sb-nav-item .ni { font-size: 17px; width: 22px; text-align: center; }
-
-    /* Divider */
-    .sb-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 10px 16px; }
-
-    /* History */
-    .sb-hist-label {
-      padding: 4px 22px 6px;
-      font-size: 10.5px; font-weight: 700;
-      color: #3a4050; text-transform: uppercase; letter-spacing: 1.1px;
-    }
-    .sb-hist-list {
-      flex: 1; overflow-y: auto;
-      padding: 4px 10px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.08) transparent;
-    }
-    .sb-hist-list::-webkit-scrollbar { width: 3px; }
-    .sb-hist-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
-
-    .hist-item {
-      display: flex; align-items: center; gap: 9px;
-      padding: 9px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: background .16s;
-      position: relative;
-    }
-    .hist-item:hover { background: rgba(255,255,255,0.05); }
-    .hist-item.active { background: var(--sidebar-active); }
-    .hist-item .hi-ic { font-size: 13px; opacity: .45; flex-shrink: 0; }
-    .hist-item .hi-txt {
-      font-size: 12.5px; color: #8a92a6;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      flex: 1;
-    }
-    .hist-item.active .hi-txt { color: #b8b0ff; }
-    .hist-item .hi-del {
-      display: none;
-      background: none; border: none; cursor: pointer;
-      color: #4a5060; font-size: 15px; padding: 0 2px;
-      transition: color .16s;
-    }
-    .hist-item:hover .hi-del { display: block; }
-    .hist-item .hi-del:hover { color: #ff6b6b; }
-
-    /* Profile */
-    .sb-profile {
-      display: flex; align-items: center; gap: 10px;
-      padding: 14px 16px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      cursor: pointer;
-      transition: background .16s;
-    }
-    .sb-profile:hover { background: rgba(255,255,255,0.03); }
-    .sb-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 14px; color: #fff;
-      flex-shrink: 0;
-    }
-    .sb-prof-info { flex: 1; min-width: 0; }
-    .sb-prof-name { font-size: 13px; font-weight: 600; color: #dde1f0; }
-    .sb-prof-plan { font-size: 11px; color: #3e4555; margin-top: 1px; }
-    .sb-prof-more { color: #3e4555; font-size: 20px; line-height: 1; }
-
-    /* ══════════════════════════════════════════
-       MAIN
-    ══════════════════════════════════════════ */
-    .main {
-      flex: 1; min-width: 0;
-      display: flex; flex-direction: column;
-      background: var(--chat-bg);
-    }
-
-    /* ─ Header ─ */
-    .chat-header {
-      height: var(--header-h);
-      padding: 0 28px;
-      background: var(--card);
+    .sidebar-nav {
+      padding: 12px 8px;
       border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
-      box-shadow: var(--shadow-sm);
-    }
-    .ch-left { display: flex; align-items: center; gap: 12px; }
-    .mobile-menu {
-      display: none; background: none; border: none;
-      cursor: pointer; color: var(--text-2); font-size: 22px;
-      padding: 4px; line-height: 1;
-    }
-    .ch-titles .ct-title { font-size: 15.5px; font-weight: 700; color: var(--text-1); }
-    .ch-titles .ct-sub { font-size: 11.5px; color: var(--text-3); margin-top: 1px; display: flex; align-items: center; gap: 5px; }
-    .ct-sub::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; display: inline-block; }
-    .ch-actions { display: flex; align-items: center; gap: 6px; }
-    .hdr-btn {
-      display: flex; align-items: center; gap: 6px;
-      padding: 7px 13px;
-      background: #fff; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 12.5px; font-weight: 500; color: var(--text-2);
-      cursor: pointer; transition: all .18s;
-    }
-    .hdr-btn:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-soft); }
-    .hdr-btn .hb-icon { font-size: 14px; }
-
-    /* ─ Messages ─ */
-    .msgs-wrap {
-      flex: 1; overflow-y: auto;
-      padding: 28px 0 12px;
-      scrollbar-width: thin;
-      scrollbar-color: #dde2ee transparent;
-    }
-    .msgs-wrap::-webkit-scrollbar { width: 5px; }
-    .msgs-wrap::-webkit-scrollbar-thumb { background: #dde2ee; border-radius: 5px; }
-
-    .msgs-inner {
-      max-width: 780px; margin: 0 auto;
-      padding: 0 24px;
-      display: flex; flex-direction: column; gap: 22px;
     }
 
-    /* Message row */
-    .msg {
-      display: flex; gap: 12px; align-items: flex-start;
-      animation: fadeUp .3s ease both;
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text2);
+      transition: all 0.15s;
     }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .msg.user { flex-direction: row-reverse; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(139,92,246,0.15); color: var(--purple2); }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
 
-    .msg-av {
-      width: 35px; height: 35px;
+    .sidebar-section { padding: 8px 8px 4px; }
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 4px 12px 8px;
+    }
+
+    .chat-history { flex: 1; overflow-y: auto; padding: 0 8px 8px; }
+    .chat-history::-webkit-scrollbar { width: 4px; }
+    .chat-history::-webkit-scrollbar-track { background: transparent; }
+    .chat-history::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+    .history-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text2);
+      transition: all 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .history-item.active { background: rgba(139,92,246,0.12); color: var(--text); }
+    .history-item .hi-icon { font-size: 13px; opacity: 0.6; flex-shrink: 0; }
+    .history-item .hi-text { overflow: hidden; text-overflow: ellipsis; }
+
+    .user-area {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .user-avatar {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
       border-radius: 50%;
-      flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 15px; font-weight: 700;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 13px; font-weight: 600; }
+    .user-plan { font-size: 11px; color: var(--text3); }
+
+    /* MAIN AREA */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .chat-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg2);
+      backdrop-filter: blur(12px);
+    }
+
+    .chat-title {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-text { font-size: 12px; color: var(--text2); }
+
+    .header-btn {
+      padding: 7px 14px;
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text2);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .header-btn:hover { background: rgba(255,255,255,0.05); color: var(--text); border-color: var(--border2); }
+
+    /* MESSAGES */
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      scroll-behavior: smooth;
+    }
+    .messages-container::-webkit-scrollbar { width: 5px; }
+    .messages-container::-webkit-scrollbar-track { background: transparent; }
+    .messages-container::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+    .msg-group { margin-bottom: 16px; }
+
+    .msg-row {
+      display: flex;
+      gap: 10px;
+      max-width: 800px;
+      align-items: flex-start;
+    }
+    .msg-row.user { margin-left: auto; flex-direction: row-reverse; }
+
+    .msg-avatar {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
       margin-top: 2px;
     }
-    .msg.ai   .msg-av { background: linear-gradient(140deg,var(--purple),var(--purple-mid)); color:#fff; box-shadow:0 3px 12px var(--purple-glow); }
-    .msg.user .msg-av { background: linear-gradient(135deg,#f093fb,#f5576c); color:#fff; box-shadow:0 3px 12px rgba(245,87,108,.35); }
+    .msg-avatar.ai {
+      background: linear-gradient(135deg, var(--purple3), var(--cyan));
+      box-shadow: 0 0 12px var(--glow2);
+    }
+    .msg-avatar.user-av {
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+    }
 
-    .msg-col { flex:1; min-width:0; max-width:76%; display:flex; flex-direction:column; }
-    .msg.user .msg-col { align-items: flex-end; }
+    .msg-content { display: flex; flex-direction: column; gap: 4px; max-width: calc(100% - 50px); }
+    .msg-row.user .msg-content { align-items: flex-end; }
 
-    .msg-label { font-size: 11.5px; font-weight: 600; color: var(--text-3); margin-bottom: 5px; }
-    .msg.user .msg-label { color: var(--purple-light); }
+    .msg-sender {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      padding: 0 4px;
+      letter-spacing: 0.03em;
+    }
+    .msg-row.user .msg-sender { text-align: right; }
 
-    .msg-bbl {
-      padding: 13px 18px;
-      border-radius: 18px;
-      font-size: 14px; line-height: 1.7;
+    .msg-bubble {
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.65;
       word-break: break-word;
+      position: relative;
+      transition: all 0.2s;
     }
-    .msg.ai .msg-bbl {
-      background: var(--ai-bubble);
-      color: var(--text-1);
-      border-radius: 4px 18px 18px 18px;
+
+    .msg-bubble.ai {
+      background: var(--surface);
       border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
+      border-top-left-radius: 4px;
+      color: var(--text);
     }
-    .msg.user .msg-bbl {
-      background: var(--user-bubble);
-      color: #fff;
-      border-radius: 18px 4px 18px 18px;
-      box-shadow: var(--shadow-purple);
+    .msg-bubble.ai:hover { border-color: var(--border2); }
+
+    .msg-bubble.user {
+      background: linear-gradient(135deg, var(--purple3), var(--purple));
+      color: white;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 15px var(--glow2);
     }
 
-    /* Prose in AI bubble */
-    .msg-bbl p   { margin-bottom: 9px; }
-    .msg-bbl p:last-child { margin-bottom: 0; }
-    .msg-bbl ul, .msg-bbl ol { padding-left: 20px; margin: 6px 0; }
-    .msg-bbl li  { margin-bottom: 5px; }
-    .msg-bbl strong { font-weight: 650; }
-    .msg-bbl em { font-style: italic; opacity: .85; }
-    .msg-bbl code {
-      background: rgba(108,99,255,.1);
-      padding: 2px 6px; border-radius: 5px;
-      font-family: 'JetBrains Mono', 'Fira Code', monospace;
-      font-size: 12.5px;
-    }
-    .msg.user .msg-bbl code { background: rgba(255,255,255,.2); }
-    .msg-bbl hr { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
-
-    /* Action bar */
-    .msg-acts {
-      display: flex; gap: 4px; margin-top: 7px;
-      opacity: 0; transition: opacity .2s;
-    }
-    .msg:hover .msg-acts { opacity: 1; }
-    .msg.user .msg-acts { justify-content: flex-end; }
-    .act-btn {
-      background: var(--card); border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 5px 9px; font-size: 13px;
-      cursor: pointer; color: var(--text-2);
-      transition: all .16s; line-height: 1;
-      white-space: nowrap;
-    }
-    .act-btn:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-soft); }
-    .act-btn.reacted { border-color: var(--purple); color: var(--purple); background: var(--purple-soft); }
-
-    /* Timestamp */
-    .msg-ts { font-size: 10.5px; color: var(--text-3); margin-top: 5px; }
-
-    /* Typing indicator */
-    .typing-row {
-      display: flex; gap: 12px; align-items: flex-start;
-      animation: fadeUp .3s ease both;
-    }
-    .typing-bbl {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 4px 18px 18px 18px;
-      padding: 14px 18px;
-      box-shadow: var(--shadow-sm);
-      display: flex; gap: 5px; align-items: center;
-    }
-    .t-dot {
-      width: 7px; height: 7px;
-      background: var(--purple); border-radius: 50%;
-      animation: bounce 1.3s ease-in-out infinite;
-    }
-    .t-dot:nth-child(2) { animation-delay: .18s; }
-    .t-dot:nth-child(3) { animation-delay: .36s; }
-    @keyframes bounce {
-      0%,60%,100% { transform: translateY(0); opacity: .55; }
-      30%          { transform: translateY(-9px); opacity: 1; }
+    .msg-time {
+      font-size: 10px;
+      color: var(--text3);
+      padding: 0 4px;
     }
 
-    /* ─ Welcome screen ─ */
-    .welcome {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 40px 24px; text-align: center;
+    .msg-actions {
+      display: flex; gap: 4px; margin-top: 4px;
+      opacity: 0; transition: opacity 0.15s;
     }
-    .wlc-logo {
-      width: 76px; height: 76px;
-      background: linear-gradient(140deg, var(--purple), var(--purple-mid));
-      border-radius: 22px;
+    .msg-group:hover .msg-actions { opacity: 1; }
+
+    .msg-action-btn {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text2);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .msg-action-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+
+    /* TYPING INDICATOR */
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      margin-bottom: 4px;
+    }
+    .typing-indicator.visible { display: flex; }
+
+    .typing-avatar {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple3), var(--cyan));
       display: flex; align-items: center; justify-content: center;
-      font-size: 36px; margin-bottom: 22px;
-      box-shadow: 0 12px 40px var(--purple-glow);
-      animation: floatLogo 3.5s ease-in-out infinite;
-    }
-    @keyframes floatLogo {
-      0%,100% { transform: translateY(0) rotate(0deg); }
-      33%      { transform: translateY(-10px) rotate(2deg); }
-      66%      { transform: translateY(-5px) rotate(-1deg); }
-    }
-    .wlc-title {
-      font-size: 34px; font-weight: 800;
-      color: var(--text-1); letter-spacing: -1.2px;
-      margin-bottom: 12px;
-    }
-    .wlc-title span { color: var(--purple); }
-    .wlc-sub {
-      font-size: 15.5px; color: var(--text-2);
-      max-width: 420px; line-height: 1.65;
-      margin-bottom: 40px;
-    }
-    .chips-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 12px; max-width: 560px; width: 100%;
-    }
-    .chip {
-      padding: 17px 18px; text-align: left;
-      background: var(--card); border: 1.5px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer; transition: all .2s ease;
-      box-shadow: var(--shadow-sm);
-    }
-    .chip:hover {
-      border-color: var(--purple);
-      box-shadow: 0 6px 24px rgba(108,99,255,.16);
-      transform: translateY(-3px);
-    }
-    .chip-ico { font-size: 24px; margin-bottom: 9px; }
-    .chip-t { font-size: 13.5px; font-weight: 650; color: var(--text-1); margin-bottom: 4px; }
-    .chip-d { font-size: 12px; color: var(--text-3); line-height: 1.45; }
-
-    /* ─ Input area ─ */
-    .input-area {
-      background: var(--card);
-      border-top: 1px solid var(--border);
-      padding: 14px 24px 18px;
+      font-size: 14px;
+      box-shadow: 0 0 12px var(--glow2);
       flex-shrink: 0;
     }
-    .input-inner { max-width: 780px; margin: 0 auto; }
 
-    .pill-row { display: flex; gap: 7px; margin-bottom: 12px; flex-wrap: wrap; }
-    .pill {
-      padding: 5px 13px;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      background: transparent;
-      font-size: 12.5px; font-weight: 500;
-      color: var(--text-2); cursor: pointer;
-      transition: all .17s;
+    .typing-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      border-top-left-radius: 4px;
+      padding: 12px 16px;
+      display: flex; gap: 5px; align-items: center;
     }
-    .pill:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-soft); }
 
-    .input-box {
-      display: flex; align-items: flex-end; gap: 10px;
-      background: var(--chat-bg);
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 11px 14px;
-      transition: border-color .2s, box-shadow .2s;
+    .typing-dot {
+      width: 7px; height: 7px;
+      background: var(--purple2);
+      border-radius: 50%;
+      animation: typing-bounce 1.3s ease-in-out infinite;
     }
-    .input-box:focus-within {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px rgba(108,99,255,.1);
-    }
-    textarea#inp {
-      flex: 1; border: none; background: transparent; resize: none;
-      font-size: 14px; color: var(--text-1); line-height: 1.6;
-      outline: none; min-height: 24px; max-height: 160px;
-      font-family: inherit; padding: 0;
-      scrollbar-width: thin;
-    }
-    textarea#inp::placeholder { color: var(--text-3); }
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
 
-    .send-btn {
-      width: 38px; height: 38px; border-radius: 10px;
-      border: none; cursor: not-allowed;
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* WELCOME SCREEN */
+    .welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      gap: 24px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .welcome-logo {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--purple3), var(--cyan));
+      border-radius: 22px;
       display: flex; align-items: center; justify-content: center;
-      background: var(--border); color: #a0a8b8;
-      transition: all .2s ease; flex-shrink: 0;
-    }
-    .send-btn.on {
-      background: linear-gradient(140deg,var(--purple),var(--purple-mid));
-      color: #fff; cursor: pointer;
-      box-shadow: 0 3px 14px var(--purple-glow);
-    }
-    .send-btn.on:hover { transform: scale(1.08); box-shadow: 0 5px 20px var(--purple-glow); }
-    .send-btn.on:active { transform: scale(.94); }
-
-    .input-hint {
-      margin-top: 10px; text-align: center;
-      font-size: 11.5px; color: var(--text-3);
+      font-size: 36px;
+      box-shadow: 0 0 40px rgba(139,92,246,0.4), 0 0 80px rgba(6,182,212,0.15);
+      animation: float 4s ease-in-out infinite;
     }
 
-    /* ══════════════════════════════════════════
-       OVERLAY / TOAST / MODAL
-    ══════════════════════════════════════════ */
-    .sb-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.45); z-index: 150;
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
     }
-    .sb-overlay.on { display: block; }
 
-    .toast {
-      position: fixed; bottom: 90px; left: 50%;
-      transform: translateX(-50%) translateY(16px);
-      background: #1a1b2e; color: #e8eaf0;
-      padding: 10px 20px; border-radius: 10px;
-      font-size: 13px; opacity: 0; pointer-events: none;
-      transition: all .28s ease; z-index: 9999;
+    .welcome-title {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text), var(--purple2), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-sub {
+      font-size: 15px;
+      color: var(--text2);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .suggestions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      max-width: 560px;
+      width: 100%;
+    }
+
+    .suggestion-card {
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .suggestion-card:hover {
+      background: var(--surface2);
+      border-color: rgba(139,92,246,0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .suggestion-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .suggestion-text { font-size: 13px; color: var(--text2); line-height: 1.4; }
+    .suggestion-text strong { display: block; color: var(--text); font-size: 14px; margin-bottom: 2px; }
+
+    /* INPUT AREA */
+    .input-area {
+      padding: 16px 20px 20px;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+    }
+
+    .quick-actions {
+      display: flex; gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .quick-btn {
+      padding: 5px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text2);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
       white-space: nowrap;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* ══════════════════════════════════════════
-       RESPONSIVE
-    ══════════════════════════════════════════ */
-    @media (max-width: 720px) {
-      .sidebar { position: fixed; top:0; left:0; bottom:0; transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .mobile-menu { display: flex; }
-      .msgs-inner { padding: 0 16px; }
-      .input-area { padding: 12px 16px 16px; }
-      .chips-grid { grid-template-columns: 1fr; max-width: 360px; }
-      .wlc-title { font-size: 26px; }
-      .hdr-btn .hb-txt { display: none; }
-      .ch-actions { gap: 4px; }
+    .quick-btn:hover {
+      background: rgba(139,92,246,0.15);
+      border-color: rgba(139,92,246,0.4);
+      color: var(--purple2);
     }
 
-    /* ── Scrollbar global ── */
-    * { scrollbar-width: thin; scrollbar-color: #dde2ee transparent; }
+    .input-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 12px 14px;
+      transition: all 0.2s;
+    }
+    .input-box:focus-within {
+      border-color: rgba(139,92,246,0.5);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.1);
+    }
+
+    .input-box textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      max-height: 140px;
+      min-height: 22px;
+      line-height: 1.6;
+      padding: 0;
+    }
+    .input-box textarea::placeholder { color: var(--text3); }
+
+    .send-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple3), var(--purple));
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      box-shadow: 0 2px 10px var(--glow2);
+    }
+    .send-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px var(--glow);
+    }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .send-btn svg { color: white; }
+
+    .input-hint {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 10px;
+    }
+    .input-hint kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: inherit;
+      font-size: 10px;
+    }
+
+    /* Message animations */
+    @keyframes msg-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg-group { animation: msg-in 0.25s ease-out forwards; }
+
+    /* Markdown in AI messages */
+    .msg-bubble.ai p { margin-bottom: 8px; }
+    .msg-bubble.ai p:last-child { margin-bottom: 0; }
+    .msg-bubble.ai ul, .msg-bubble.ai ol { margin: 6px 0 6px 18px; }
+    .msg-bubble.ai li { margin-bottom: 3px; }
+    .msg-bubble.ai code {
+      background: rgba(139,92,246,0.15);
+      border: 1px solid rgba(139,92,246,0.2);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .msg-bubble.ai pre {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin: 8px 0;
+      overflow-x: auto;
+    }
+    .msg-bubble.ai pre code { background: none; border: none; padding: 0; }
+    .msg-bubble.ai strong { color: var(--purple2); font-weight: 600; }
+    .msg-bubble.ai em { color: var(--cyan); }
+
+    /* Scrollbar for main area */
+    .main::-webkit-scrollbar { width: 0; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .sidebar { display: none; }
+      .suggestions-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Token count */
+    .token-count {
+      font-size: 11px;
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .token-bar {
+      width: 60px;
+      height: 3px;
+      background: var(--surface2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .token-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+      border-radius: 2px;
+      width: 5%;
+      transition: width 0.5s;
+    }
+
+    /* Copy feedback */
+    .copied-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s;
+      z-index: 999;
+    }
+    .copied-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 <body>
-
-<!-- Overlay (mobile) -->
-<div class="sb-overlay" id="overlay"></div>
-
-<!-- ════════════════════════════════════ SIDEBAR ════════════════════════════ -->
-<aside class="sidebar" id="sidebar">
-
-  <!-- Logo -->
-  <div class="sb-logo" onclick="newChat()">
-    <div class="sb-logo-icon">✦</div>
-    <div class="sb-logo-text">Aura <em>AI</em></div>
-  </div>
-
-  <!-- New Chat -->
-  <button class="new-chat-btn" onclick="newChat()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    New Chat
-  </button>
-
-  <!-- Nav -->
-  <nav class="sb-nav">
-    <div class="sb-nav-item active" data-nav="chat" onclick="navClick(this)">
-      <span class="ni">💬</span> Chat
-    </div>
-    <div class="sb-nav-item" data-nav="creation" onclick="navClick(this)">
-      <span class="ni">✨</span> AI Creation
-    </div>
-    <div class="sb-nav-item" data-nav="bots" onclick="navClick(this)">
-      <span class="ni">🤖</span> Bots
-    </div>
-  </nav>
-
-  <div class="sb-divider"></div>
-  <div class="sb-hist-label">Recent Chats</div>
-
-  <!-- History -->
-  <div class="sb-hist-list" id="histList"></div>
-
-  <!-- Profile -->
-  <div class="sb-profile">
-    <div class="sb-avatar">E</div>
-    <div class="sb-prof-info">
-      <div class="sb-prof-name">Emre Aslan</div>
-      <div class="sb-prof-plan">✦ Free Plan</div>
-    </div>
-    <div class="sb-prof-more">⋯</div>
-  </div>
-
-</aside>
-
-<!-- ════════════════════════════════════ MAIN ═══════════════════════════════ -->
-<main class="main">
-
-  <!-- Header -->
-  <header class="chat-header">
-    <div class="ch-left">
-      <button class="mobile-menu" id="menuBtn" aria-label="Menu">☰</button>
-      <div class="ch-titles">
-        <div class="ct-title" id="ctTitle">New Conversation</div>
-        <div class="ct-sub">Powered by Aura AI</div>
-      </div>
-    </div>
-    <div class="ch-actions">
-      <button class="hdr-btn" onclick="shareChat()">
-        <span class="hb-icon">🔗</span>
-        <span class="hb-txt">Share</span>
-      </button>
-      <button class="hdr-btn" onclick="renameChat()">
-        <span class="hb-icon">✏️</span>
-        <span class="hb-txt">Edit</span>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="#" class="logo">
+        <div class="logo-icon">✨</div>
+        <span class="logo-text">Aura <span>AI</span></span>
+      </a>
+      <button class="new-chat-btn" onclick="startNewChat()">
+        <span>+</span> New Chat
       </button>
     </div>
-  </header>
-
-  <!-- Welcome screen -->
-  <div class="welcome" id="welcome">
-    <div class="wlc-logo">✦</div>
-    <h1 class="wlc-title">Hello, I'm <span>Aura AI</span></h1>
-    <p class="wlc-sub">Your intelligent companion for creativity, research, and problem-solving. Ask me anything — I'm ready to help.</p>
-    <div class="chips-grid">
-      <div class="chip" onclick="sendSug('Write me a beautiful poem about the night sky and the cosmos')">
-        <div class="chip-ico">🌙</div>
-        <div class="chip-t">Write a poem</div>
-        <div class="chip-d">Creative poetry in any style or about any topic</div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="setView('chat')">
+        <span class="icon">💬</span> Chat
       </div>
-      <div class="chip" onclick="sendSug('What can you do for me?')">
-        <div class="chip-ico">⚡</div>
-        <div class="chip-t">What can you do?</div>
-        <div class="chip-d">Explore all my capabilities and features</div>
+      <div class="nav-item" onclick="setView('create')">
+        <span class="icon">✨</span> AI Creation
       </div>
-      <div class="chip" onclick="sendSug('Give me 5 innovative business ideas for 2025')">
-        <div class="chip-ico">💡</div>
-        <div class="chip-t">Business ideas</div>
-        <div class="chip-d">Fresh startup concepts and entrepreneurial ventures</div>
+      <div class="nav-item" onclick="setView('bots')">
+        <span class="icon">🤖</span> Bots
       </div>
-      <div class="chip" onclick="sendSug('Explain quantum computing in simple terms')">
-        <div class="chip-ico">🔬</div>
-        <div class="chip-t">Explain science</div>
-        <div class="chip-d">Complex topics made clear and easy to understand</div>
+    </nav>
+    <div class="chat-history" id="chatHistory">
+      <div class="sidebar-section-label">Recent Chats</div>
+    </div>
+    <div class="user-area">
+      <div class="user-avatar" id="userAvatar">E</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">Emre Aslan</div>
+        <div class="user-plan">★ Free Plan</div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- Messages -->
-  <div class="msgs-wrap" id="msgsWrap" style="display:none">
-    <div class="msgs-inner" id="msgsInner"></div>
-  </div>
+  <!-- MAIN -->
+  <main class="main">
+    <div class="chat-header">
+      <div class="status-dot"></div>
+      <div class="status-text">Powered by Aura AI</div>
+      <div class="chat-title" id="chatTitleHeader">New Chat</div>
+      <button class="header-btn">🔗 Share</button>
+      <button class="header-btn" onclick="editProfile()">✏️ Edit</button>
+    </div>
 
-  <!-- Input area -->
-  <div class="input-area">
-    <div class="input-inner">
-      <div class="pill-row">
-        <button class="pill" onclick="pill('Translate this to English: ')">🌐 Translate</button>
-        <button class="pill" onclick="pill('Help me write: ')">✍️ Writing</button>
-        <button class="pill" onclick="pill('Summarize this: ')">📋 Summarize</button>
-        <button class="pill" onclick="pill('Explain this concept: ')">💬 Explain</button>
-        <button class="pill" onclick="pill('Debug this code: ')">🐛 Debug</button>
-        <button class="pill" onclick="toast('More features coming soon!')">⋯ More</button>
+    <div class="messages-container" id="messagesContainer">
+      <!-- Welcome screen shown initially -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-logo">✨</div>
+        <div>
+          <div class="welcome-title">Hello, I'm Aura AI</div>
+          <div class="welcome-sub" style="margin-top:8px">Your intelligent companion for coding, writing, analysis, and creative tasks. What would you like to explore today?</div>
+        </div>
+        <div class="suggestions-grid">
+          <div class="suggestion-card" onclick="sendSuggestion('Help me write a creative short story')">
+            <span class="suggestion-icon">✍️</span>
+            <div class="suggestion-text"><strong>Creative Writing</strong>Help me craft a story</div>
+          </div>
+          <div class="suggestion-card" onclick="sendSuggestion('Explain quantum computing in simple terms')">
+            <span class="suggestion-icon">🔬</span>
+            <div class="suggestion-text"><strong>Explain a concept</strong>Break down complex ideas</div>
+          </div>
+          <div class="suggestion-card" onclick="sendSuggestion('Review this code and suggest improvements:\nfunction add(a,b) { return a+b }')">
+            <span class="suggestion-icon">💻</span>
+            <div class="suggestion-text"><strong>Code Review</strong>Debug or improve code</div>
+          </div>
+          <div class="suggestion-card" onclick="sendSuggestion('Help me brainstorm startup ideas in tech')">
+            <span class="suggestion-icon">💡</span>
+            <div class="suggestion-text"><strong>Brainstorm</strong>Generate creative ideas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typing indicator -->
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="typing-avatar">✨</div>
+      <div class="typing-bubble">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <div class="quick-actions" id="quickActions">
+        <button class="quick-btn" onclick="sendSuggestion('Translate this to Spanish: Hello, how are you?')">🌐 Translate</button>
+        <button class="quick-btn" onclick="sendSuggestion('Help me write a professional email')">✏️ Writing</button>
+        <button class="quick-btn" onclick="sendSuggestion('Summarize the key points of AI advancements in 2024')">📋 Summarize</button>
+        <button class="quick-btn" onclick="sendSuggestion('Explain how machine learning works')">💬 Explain</button>
+        <button class="quick-btn" onclick="sendSuggestion('Debug this: console.log(undefinedVar)')">🐛 Debug</button>
+        <button class="quick-btn" onclick="toggleQuickActions()">⋯ More</button>
       </div>
       <div class="input-box">
-        <textarea id="inp" rows="1" placeholder="Ask Aura anything…"></textarea>
-        <button class="send-btn" id="sendBtn" aria-label="Send">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"/>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        <textarea id="userInput" placeholder="Ask Aura anything..." rows="1" 
+          onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
         </button>
       </div>
-      <div class="input-hint">Shift + Enter for new line &nbsp;·&nbsp; Enter to send</div>
+      <div class="input-hint">
+        <kbd>Shift</kbd> + <kbd>Enter</kbd> for new line &middot; <kbd>Enter</kbd> to send
+      </div>
     </div>
-  </div>
+  </main>
 
-</main>
+  <div class="copied-toast" id="copiedToast">Copied to clipboard!</div>
 
-<!-- Toast -->
-<div class="toast" id="toastEl"></div>
+  <script>
+    // ===== STATE =====
+    let conversations = {};
+    let currentConvId = null;
+    let isTyping = false;
+    let messageCount = 0;
 
-<!-- ════════════════════════════════════ JS ═════════════════════════════════ -->
-<script>
-/* ─── State ─────────────────────────────────────────────────────────────── */
-const state = {
-  chats: [],         // [{ id, title, msgs:[] }]
-  activeId: null,
-  busy: false,
-};
+    const AURA_NAME = 'Aura AI';
+    const CREATOR = 'Emre Aslan';
+    const now = () => new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 
-/* ─── DOM ───────────────────────────────────────────────────────────────── */
-const $ = id => document.getElementById(id);
-const inp      = $('inp');
-const sendBtn  = $('sendBtn');
-const msgsWrap = $('msgsWrap');
-const msgsInner= $('msgsInner');
-const welcome  = $('welcome');
-const histList = $('histList');
-const ctTitle  = $('ctTitle');
-const sidebar  = $('sidebar');
-const overlay  = $('overlay');
+    // ===== SMART RESPONSE ENGINE =====
+    function getAuraResponse(input) {
+      const t = input.toLowerCase().trim();
+      const words = t.split(/\s+/);
 
-/* ─── Input ─────────────────────────────────────────────────────────────── */
-inp.addEventListener('input', () => {
-  inp.style.height = 'auto';
-  inp.style.height = Math.min(inp.scrollHeight, 160) + 'px';
-  sendBtn.classList.toggle('on', inp.value.trim().length > 0);
-});
+      // --- Greetings ---
+      if (/^(hey|hi|hello|sup|yo|hiya|howdy|greetings|good\s*(morning|afternoon|evening|night))/.test(t) && t.length < 40) {
+        const greets = [
+          "Hey! 👋 Great to have you here. What\'s on your mind today?",
+          "Hi there! What can I help you with?",
+          "Hello! I\'m Aura, ready to help. Ask me anything!",
+          "Hey! 😄 What would you like to explore today?"
+        ];
+        return greets[Math.floor(Math.random()*greets.length)];
+      }
 
-inp.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    if (!state.busy && inp.value.trim()) go();
-  }
-});
+      // --- How are you ---
+      if (/how are (you|u|ya)|how\'s it going|how do you feel|you okay|u ok/.test(t)) {
+        return "I\'m doing great, thanks for asking! 😊 As an AI I don\'t have feelings per se, but I\'m running smoothly and ready to help. How are *you* doing?";
+      }
 
-sendBtn.addEventListener('click', () => {
-  if (!state.busy && inp.value.trim()) go();
-});
+      // --- What are you / who are you ---
+      if (/what are you|who are (you|u)|what is aura|tell me about yourself|describe yourself/.test(t)) {
+        return "I\'m **Aura AI** — an intelligent conversational assistant built to help you with coding, writing, research, creative projects, and much more. I combine fast reasoning with a friendly tone to make every interaction useful. What would you like to work on?";
+      }
 
-/* ─── Mobile sidebar ────────────────────────────────────────────────────── */
-$('menuBtn').addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('on');
-});
-overlay.addEventListener('click', closeSidebar);
+      // --- Who made you / who created you ---
+      if (/who (made|built|created|developed|coded|programmed) (you|u|this|aura)|who\'s (your|the) (creator|maker|developer|owner)/.test(t)) {
+        return "I was created by **" + CREATOR + "** 🚀 He built Aura AI to be a powerful yet friendly assistant. Pretty cool, right? Is there something I can help you with today?";
+      }
 
-function closeSidebar() {
-  sidebar.classList.remove('open');
-  overlay.classList.remove('on');
-}
+      // --- What can you do ---
+      if (/what can (you|u) do|your (skills|abilities|features|capabilities)|help me understand what/.test(t)) {
+        return "Here\'s what I can help with:\n\n- **💻 Coding** — write, debug, explain, or review code in any language\n- **✍️ Writing** — essays, emails, stories, scripts, summaries\n- **🔬 Research** — explain complex topics clearly\n- **💡 Brainstorming** — generate creative ideas fast\n- **🌍 Translation** — convert text between languages\n- **🧠 Analysis** — break down data, arguments, or problems\n\nJust ask away — no topic is too niche!";
+      }
 
-/* ─── Nav ───────────────────────────────────────────────────────────────── */
-function navClick(el) {
-  document.querySelectorAll('.sb-nav-item').forEach(n => n.classList.remove('active'));
-  el.classList.add('active');
-}
+      // --- Name ---
+      if (/your name|what.*called|who.*you|are you (an )?ai|are you (a )?robot|are you (a )?bot|are you (a )?human/.test(t)) {
+        if (/human/.test(t)) return "Nope, I\'m an AI! 🤖 I\'m **Aura AI** — your intelligent assistant. Though I try to be as helpful and natural as any person could be.";
+        return "My name is **Aura AI**! Nice to meet you 😊 How can I help?";
+      }
 
-/* ─── New Chat ──────────────────────────────────────────────────────────── */
-function newChat() {
-  state.activeId = null;
-  ctTitle.textContent = 'New Conversation';
-  msgsInner.innerHTML = '';
-  msgsWrap.style.display = 'none';
-  welcome.style.display = 'flex';
-  inp.value = '';
-  inp.style.height = 'auto';
-  sendBtn.classList.remove('on');
-  renderHistory();
-  closeSidebar();
-  inp.focus();
-}
+      // --- Age ---
+      if (/how old (are you|r u)|your age/.test(t)) {
+        return "I don\'t have an age exactly — I\'m software, not a person! 😄 But I\'m always learning and improving. Think of me as perpetually young and curious.";
+      }
 
-/* ─── Send / receive ────────────────────────────────────────────────────── */
-function go() {
-  const text = inp.value.trim();
-  if (!text || state.busy) return;
+      // --- Thank you ---
+      if (/^(thank(s| you)|thx|ty|cheers|appreciate it|great|awesome|perfect|nice one|well done)/.test(t) && t.length < 50) {
+        const thanks = [
+          "You\'re welcome! 😊 Happy to help anytime.",
+          "Glad I could help! Let me know if you need anything else.",
+          "Anytime! That\'s what I\'m here for 😄",
+          "Happy to help! Feel free to ask me anything else."
+        ];
+        return thanks[Math.floor(Math.random()*thanks.length)];
+      }
 
-  // Show chat
-  welcome.style.display = 'none';
-  msgsWrap.style.display = 'block';
+      // --- Bye ---
+      if (/^(bye|goodbye|see ya|take care|later|cya|ttyl|gotta go)/.test(t) && t.length < 30) {
+        return "Goodbye! 👋 It was great chatting with you. Come back anytime!";
+      }
 
-  // Create chat entry if needed
-  if (!state.activeId) {
-    const id = Date.now().toString(36);
-    const title = text.length > 34 ? text.slice(0, 34) + '…' : text;
-    state.chats.unshift({ id, title, msgs: [] });
-    state.activeId = id;
-    ctTitle.textContent = title;
-    renderHistory();
-  }
+      // --- Joke ---
+      if (/tell me a joke|make me laugh|say something funny|joke/.test(t)) {
+        const jokes = [
+          "Why do programmers prefer dark mode? — Because light attracts bugs! 😄",
+          "Why was the JavaScript developer sad? Because he didn\'t know how to *null* his feelings. 😭",
+          "I told my computer I needed a break. Now it won\'t stop sending me vacation ads. 💻",
+          "Why do AI assistants never get lost? Because we always follow the *algorithm*. 😄"
+        ];
+        return jokes[Math.floor(Math.random()*jokes.length)];
+      }
 
-  const chat = activeChat();
-  const userMsg = { role:'user', text, ts: now() };
-  chat.msgs.push(userMsg);
-  renderMsg(userMsg);
+      // --- Love / feelings ---
+      if (/i love you|do you love|do you like me|are you my friend/.test(t)) {
+        return "That\'s sweet! 😊 I care about every conversation I have. While I\'m an AI and can\'t love the way humans do, I\'m genuinely here to support you whenever you need. What can I do for you?";
+      }
 
-  inp.value = '';
-  inp.style.height = 'auto';
-  sendBtn.classList.remove('on');
+      // --- Meaning of life ---
+      if (/meaning of life|why are we here|purpose of existence/.test(t)) {
+        return "The classic question! 😄 Philosophers have debated this for millennia. From **Aristotle\'s** *eudaimonia* (flourishing) to **existentialist** ideas of self-created meaning — the honest answer is: we each get to decide. What gives *you* meaning?";
+      }
 
-  // Typing
-  state.busy = true;
-  const typer = showTyping();
-  const delay = 800 + Math.random() * 1400;
+      // --- Code requests ---
+      if (/write (a |some )?(code|function|script|program|class|component)|how (do i|do you|to) (code|build|create|make|implement)|debug|fix (this|my|the) (code|bug|error)/.test(t)) {
+        return "I\'d love to help with that! 💻 Please share the details — what language, what should it do, and any existing code you have. I\'ll write or fix it for you.";
+      }
 
-  setTimeout(() => {
-    typer.remove();
-    state.busy = false;
-    const reply = respond(text);
-    const aiMsg = { role:'ai', text: reply, ts: now() };
-    chat.msgs.push(aiMsg);
-    renderMsg(aiMsg);
-    scrollBottom();
-  }, delay);
+      // --- Math ---
+      if (/^\d+\s*[+\-*\/]\s*\d+/.test(t)) {
+        try {
+          const sanitized = t.replace(/[^\d+\-*\/().\s]/g,'');
+          const result = Function('\'use strict\'; return (' + sanitized + ')')();
+          return "✨ " + t + " = **" + result + "**";
+        } catch(e) {}
+      }
 
-  scrollBottom();
-}
+      // --- Translate ---
+      if (/translate|how do you say|in (spanish|french|german|japanese|arabic|chinese|italian|portuguese)/.test(t)) {
+        return "I can help with translations! Please tell me what text you want translated and which language you want it in, and I\'ll do my best to help. 🌍";
+      }
 
-function sendSug(text) {
-  inp.value = text;
-  inp.dispatchEvent(new Event('input'));
-  go();
-}
+      // --- Weather ---
+      if (/weather|temperature|will it rain|forecast/.test(t)) {
+        return "I don\'t have access to live weather data, but I\'d suggest checking **weather.com** or just Googling your city + weather for accurate forecasts! Is there anything else I can help with?";
+      }
 
-/* ─── Render message ────────────────────────────────────────────────────── */
-function renderMsg(msg) {
-  const isUser = msg.role === 'user';
-  const d = document.createElement('div');
-  d.className = `msg ${msg.role}`;
+      // --- Time / date ---
+      if (/what time|what\'s the time|what.*date|today\'s date/.test(t)) {
+        return "The current time is **" + new Date().toLocaleTimeString() + "** and today is **" + new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'}) + "**.";
+      }
 
-  const actions = isUser
-    ? `<button class="act-btn" onclick="copyBbl(this)" title="Copy">📋 Copy</button>`
-    : `<button class="act-btn" onclick="react(this,'👍')" title="Helpful">👍</button>
-       <button class="act-btn" onclick="react(this,'👎')" title="Not helpful">👎</button>
-       <button class="act-btn" onclick="copyBbl(this)" title="Copy">📋 Copy</button>
-       <button class="act-btn" onclick="regen(this)" title="Regenerate">🔄</button>`;
+      // --- Summarize ---
+      if (/summarize|give me a summary|tldr|sum up/.test(t)) {
+        if (t.length < 60) return "Sure! Please paste the text you\'d like me to summarize and I\'ll give you a clear, concise summary. 📋";
+        const wc = input.split(/\s+/).length;
+        return "Got it! Here\'s a summary of what you shared (" + wc + " words):\n\nThe content discusses key themes and ideas that center around the main topic. To give you a more precise summary, could you share the full text you\'d like condensed?";
+      }
 
-  d.innerHTML = `
-    <div class="msg-av">${isUser ? 'E' : '✦'}</div>
-    <div class="msg-col">
-      <div class="msg-label">${isUser ? 'You' : 'Aura AI'}</div>
-      <div class="msg-bbl">${fmt(msg.text)}</div>
-      <div class="msg-acts">${actions}</div>
-      <div class="msg-ts">${msg.ts}</div>
-    </div>`;
-  msgsInner.appendChild(d);
-}
+      // --- Write / help with ---
+      if (/write (a|an|my|the)|help me write|draft (a|an)|create (a|an)/.test(t)) {
+        const topic = input.replace(/write (a|an|my|the)|help me write|draft (a|an)|create (a|an)/gi,'').trim();
+        return "Happy to help you write that! ✍️ " + (topic ? "Tell me more about \'**" + topic + "**\' — what tone, length, or style do you want? Any key points to include?" : "What would you like me to write? Give me some details about the topic, tone, and length.");
+      }
 
-function fmt(text) {
-  return text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')   // escape
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g,'<em>$1</em>')
-    .replace(/`(.*?)`/g,'<code>$1</code>')
-    .replace(/^---$/gm,'<hr>')
-    .replace(/\n\n/g,'</p><p>')
-    .replace(/\n/g,'<br>')
-    .replace(/^/,'<p>').replace(/$/,'</p>');
-}
+      // --- Explain ---
+      if (/^(what is|what are|explain|how does|how do|why is|why does|tell me about|describe)/.test(t)) {
+        const topic = input.replace(/^(what is|what are|explain|how does|how do|why is|why does|tell me about|describe)/i,'').trim();
+        if (topic.length < 3) return "What topic would you like me to explain? I\'m ready! 😊";
+        return "Great question! **" + topic.charAt(0).toUpperCase() + topic.slice(1) + "** is a fascinating subject. In simple terms: it\'s a concept/technology/idea that involves core principles and mechanisms that work together. Want me to dive deeper into any specific aspect of it?";
+      }
 
-/* ─── Typing indicator ──────────────────────────────────────────────────── */
-function showTyping() {
-  const d = document.createElement('div');
-  d.className = 'typing-row';
-  d.innerHTML = `
-    <div class="msg-av" style="background:linear-gradient(140deg,#6c63ff,#9d96ff);color:#fff;
-         width:35px;height:35px;border-radius:50%;display:flex;align-items:center;
-         justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;margin-top:2px;
-         box-shadow:0 3px 12px rgba(108,99,255,.35);">✦</div>
-    <div class="typing-bbl">
-      <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
-    </div>`;
-  msgsInner.appendChild(d);
-  scrollBottom();
-  return d;
-}
+      // --- Yes / No / Ok ---
+      if (/^(yes|yeah|yep|yup|sure|ok|okay|alright|gotcha|roger|absolutely|definitely|no|nope|nah|not really)$/.test(t)) {
+        const affirm = ['Got it! What would you like to do next?','Understood! Anything else I can help with?','Perfect! Let me know what you need.'];
+        return affirm[Math.floor(Math.random()*affirm.length)];
+      }
 
-function scrollBottom() {
-  requestAnimationFrame(() => { msgsWrap.scrollTop = msgsWrap.scrollHeight; });
-}
-
-/* ─── History ───────────────────────────────────────────────────────────── */
-function renderHistory() {
-  histList.innerHTML = '';
-  state.chats.forEach(chat => {
-    const d = document.createElement('div');
-    d.className = `hist-item${chat.id === state.activeId ? ' active' : ''}`;
-    d.dataset.id = chat.id;
-    d.innerHTML = `<span class="hi-ic">💬</span>
-                   <span class="hi-txt">${esc(chat.title)}</span>
-                   <button class="hi-del" title="Delete" onclick="delChat(event,'${chat.id}')">✕</button>`;
-    d.addEventListener('click', e => { if (!e.target.classList.contains('hi-del')) loadChat(chat.id); });
-    histList.appendChild(d);
-  });
-}
-
-function loadChat(id) {
-  const chat = state.chats.find(c => c.id === id);
-  if (!chat) return;
-  state.activeId = id;
-  ctTitle.textContent = chat.title;
-  msgsInner.innerHTML = '';
-  welcome.style.display = 'none';
-  msgsWrap.style.display = 'block';
-  chat.msgs.forEach(renderMsg);
-  renderHistory();
-  scrollBottom();
-  closeSidebar();
-}
-
-function delChat(e, id) {
-  e.stopPropagation();
-  state.chats = state.chats.filter(c => c.id !== id);
-  if (state.activeId === id) newChat();
-  else renderHistory();
-}
-
-function activeChat() { return state.chats.find(c => c.id === state.activeId); }
-
-/* ─── Actions ───────────────────────────────────────────────────────────── */
-function react(btn, emoji) {
-  btn.classList.toggle('reacted');
-  toast(emoji === '👍' ? 'Thanks for the feedback! 🙌' : 'Got it — I\'ll work on being better.');
-}
-
-function copyBbl(btn) {
-  const bbl = btn.closest('.msg-col').querySelector('.msg-bbl');
-  navigator.clipboard.writeText(bbl.innerText).then(() => toast('Copied to clipboard!'));
-}
-
-function regen(btn) {
-  const chat = activeChat();
-  if (!chat || chat.msgs.length < 2) return;
-  // Remove last AI msg
-  const lastAiEl = [...msgsInner.querySelectorAll('.msg.ai')].at(-1);
-  if (lastAiEl) lastAiEl.remove();
-  chat.msgs.pop();
-  const lastUser = chat.msgs.at(-1);
-  if (!lastUser || lastUser.role !== 'user') return;
-  state.busy = true;
-  const typer = showTyping();
-  setTimeout(() => {
-    typer.remove();
-    state.busy = false;
-    const aiMsg = { role:'ai', text: respond(lastUser.text), ts: now() };
-    chat.msgs.push(aiMsg);
-    renderMsg(aiMsg);
-    scrollBottom();
-  }, 800 + Math.random() * 1200);
-}
-
-function shareChat() { toast('Share link copied to clipboard! 🔗'); }
-
-function renameChat() {
-  const chat = activeChat();
-  const current = chat ? chat.title : ctTitle.textContent;
-  const title = prompt('Rename conversation:', current);
-  if (title && title.trim()) {
-    const t = title.trim();
-    ctTitle.textContent = t;
-    if (chat) { chat.title = t; renderHistory(); }
-  }
-}
-
-/* ─── Pills ─────────────────────────────────────────────────────────────── */
-function pill(prefix) {
-  inp.value = prefix;
-  inp.dispatchEvent(new Event('input'));
-  inp.focus();
-  inp.setSelectionRange(inp.value.length, inp.value.length);
-}
-
-/* ─── Toast ─────────────────────────────────────────────────────────────── */
-function toast(msg) {
-  const el = $('toastEl');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove('show'), 2800);
-}
-
-/* ─── Utils ─────────────────────────────────────────────────────────────── */
-function now() {
-  return new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-}
-function esc(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-/* ════════════════════════════════════════════════════════════════════════════
-   AI RESPONSE ENGINE
-════════════════════════════════════════════════════════════════════════════ */
-function respond(input) {
-  const q = input.toLowerCase();
-
-  /* ── Greetings ── */
-  if (/^(hi|hello|hey|howdy|sup|greetings|good (morning|afternoon|evening)|what'?s up)/i.test(q)) {
-    return pick([
-      `Hello there! 👋 I'm **Aura AI**, your intelligent conversation companion.\n\nI can help you write, research, brainstorm, code, analyze, translate — and a whole lot more. What's on your mind today?`,
-      `Hey! Great to meet you. I'm **Aura AI** — think of me as a creative and analytical partner rolled into one.\n\nWhether you need a poem, a business plan, code review, or just a good chat — I'm here. What would you like to explore?`,
-      `Hi! 😊 Welcome to **Aura AI**. I'm ready to dive into whatever you need — creative projects, research deep-dives, technical challenges, or casual conversation.\n\nWhat can I help you with today?`,
-    ]);
-  }
-
-  /* ── What can you do ── */
-  if (/what can you do|capabilities|your features|what (are|do) you|help me with/i.test(q)) {
-    return `Here's a full rundown of what I can do for you:\n\n**✍️ Writing & Creativity**\nEssays, stories, poems, scripts, cover letters, product descriptions, social captions — any format, any tone.\n\n**🔬 Research & Explanation**\nBreak down complex topics in science, history, philosophy, law, medicine, and more into clear, digestible language.\n\n**💻 Code & Engineering**\nWrite, review, debug, and explain code across Python, JavaScript, TypeScript, Rust, Go, SQL, and dozens more.\n\n**🧠 Brainstorming & Strategy**\nBusiness ideas, marketing strategies, creative concepts, product roadmaps — I'll generate options and help you refine them.\n\n**🌐 Languages & Translation**\nTranslate text across 50+ languages with nuance, context, and cultural awareness.\n\n**📊 Analysis & Summarization**\nBreak down documents, summarize long content, extract insights, compare options.\n\n**🎓 Learning & Teaching**\nExplain anything from first principles, create study guides, quiz you on topics, and adapt to your level.\n\nJust ask — I'm here to help with virtually anything. 🚀 What shall we tackle first?`;
-  }
-
-  /* ── Poem request ── */
-  if (/poem|poetry|write.*poem|a verse|rhyme|sonnet|haiku/i.test(q)) {
-    const topic =
-      /night sky|cosmos|star/i.test(q) ? 'the night sky' :
-      /ocean|sea|wave/i.test(q)        ? 'the ocean' :
-      /love|heart/i.test(q)            ? 'love' :
-      /time|moment/i.test(q)           ? 'time' :
-      /nature|forest|tree/i.test(q)    ? 'nature' : 'the wonder of existence';
-
-    return `Here's a poem I wrote for you about **${topic}**:\n\n---\n\n*Infinite Canvas*\n\nBeneath a velvet, starlit dome,\nwhere ancient light finds its new home,\neach pin of fire, a story told\nof worlds beyond — both new and old.\n\nThe cosmos breathes in silver hues,\na gallery of midnight blues;\nwe stand below, so small, so bright —\ntwo sparks who dare to face the night.\n\nIn every constellation's arc,\na quiet signal in the dark:\nthat wonder is the price we pay\nfor being here, awake, today.\n\n---\n\nWould you like me to try a different style — perhaps a **haiku**, a **sonnet**, or something more playful or melancholic? I can also write about any topic you have in mind! 🌙`;
-  }
-
-  /* ── Quantum computing ── */
-  if (/quantum (computing|computer|physics)|qubit|superposition|entanglement|wave function/i.test(q)) {
-    return `Great question — quantum computing is genuinely mind-bending. Let me break it down:\n\n**Classical vs. Quantum**\nYour laptop uses *bits* — switches that are either 0 or 1. Quantum computers use *qubits*, which can be 0, 1, or **both simultaneously** through a property called **superposition**. Imagine a spinning coin — it's both heads and tails until it lands.\n\n**Why this matters**\nThis lets quantum computers explore an enormous number of possibilities at once, making them exceptionally powerful for specific problems:\n\n- 🔐 **Cryptography** — Breaking RSA encryption (and building quantum-safe alternatives)\n- 💊 **Drug discovery** — Simulating molecular interactions at atomic scale\n- 📈 **Optimization** — Logistics, finance, supply chain routing\n- 🤖 **AI** — Exponentially accelerating certain ML algorithms\n\n**Entanglement**\nTwo qubits can be "entangled" — measuring one instantly reveals information about the other, regardless of distance. Einstein famously called it *"spooky action at a distance."* It's real, experimentally verified, and bizarre.\n\n**The catch**\nQubits are extraordinarily fragile. Even a tiny vibration or temperature fluctuation causes **decoherence** — the quantum state collapses. That's why quantum computers must operate near absolute zero (−273°C). IBM, Google, and others are racing to solve this.\n\n**Where we are today**\nWe're in the *NISQ era* (Noisy Intermediate-Scale Quantum). Current machines have hundreds of qubits but with significant error rates. Fault-tolerant quantum computers — truly practical ones — are likely 10–15 years away.\n\nWant me to go deeper on any of these aspects? 🔬`;
-  }
-
-  /* ── Business ideas ── */
-  if (/business idea|startup idea|entrepreneurship|side hustle|venture|startup/i.test(q)) {
-    return `Here are **5 innovative business ideas for 2025** 🚀\n\n**1. 🧠 AI-Personalized Learning Coach**\nA subscription platform that builds hyper-personalized learning paths using AI — adapting pace, content, and style in real-time based on your progress. Think Duolingo meets a private tutor for *any* skill.\n*Market:* $350B+ e-learning industry. Low customer acquisition cost through content marketing.\n\n**2. 🌱 Modular Urban Micro-Farms**\nCompact, automated hydroponic pods installed in restaurants, offices, and homes. Subscription model provides fresh produce grown on-premise, slashing supply chain costs and carbon footprint.\n*Moat:* Hardware + recurring software subscriptions.\n\n**3. 🔋 Battery-as-a-Service (BaaS) for EVs**\nDrivers lease batteries separately from EVs and swap depleted ones at stations in under 3 minutes — like propane tank exchange. Dramatically lowers the upfront EV cost barrier.\n*Proven in:* China (NIO), but largely untapped in Western markets.\n\n**4. 🏠 Elderly Companionship Platform**\nAI + human-hybrid daily check-ins for seniors — medication reminders, loneliness prevention, health monitoring. Sold to adult children of aging parents.\n*Market:* 55M+ Americans over 65 and growing rapidly.\n\n**5. 🎮 Premium Micro-Experience Marketplace**\nBook 30–90 minute virtual sessions with world-class experts: cook with a Michelin chef, practice French with a Paris local, meditate with a Himalayan monk.\n*Revenue model:* 20–30% commission, subscription tiers for heavy users.\n\n---\n\nWant me to dive deeper on any of these? I can flesh out the **business model, go-to-market strategy, competitive landscape**, or help you evaluate fit for your background.`;
-  }
-
-  /* ── Meaning of life / philosophy ── */
-  if (/meaning of life|purpose of life|why (are we|am i) here|consciousness|existence|philosophy/i.test(q)) {
-    return `You've landed on one of the oldest and richest questions in human history. 🌌\n\nHere are a few perspectives worth sitting with:\n\n**🔬 The scientific view**\nWe're self-aware arrangements of stardust that evolved over 4 billion years. Consciousness is an emergent property of complexity. Meaning itself is a construct — which makes it all the more remarkable that we get to *choose* it.\n\n**🏛️ Existentialism (Sartre, Camus)**\nThere's no pre-given meaning in the universe. It's inherently indifferent. But this isn't cause for despair — it's *liberation*. You're radically free to define your own purpose. Camus suggested we imagine Sisyphus happy: the struggle itself is enough.\n\n**🙏 Spiritual & religious traditions**\nAcross traditions — from Buddhism to Christianity to Stoicism — meaning tends to cluster around connection: to others, to something larger than yourself, to the present moment.\n\n**💡 Positive psychology's answer**\nMartin Seligman's research suggests flourishing humans tend to share five elements: **Positive emotions, Engagement, Relationships, Meaning, and Achievement** (PERMA). It's less about finding a grand cosmic purpose and more about building a life that feels deeply worth living.\n\n---\n\nMy honest take? The *question* itself might be more valuable than any answer. It keeps you curious, intentional, and awake to your life.\n\nWhat's prompting the question for you? Sometimes the context reveals the answer. 🎯`;
-  }
-
-  /* ── Code request ── */
-  if (/write (me |some |a |the )?code|function|algorithm|debug|bug|error|script|program/i.test(q)) {
-    return `I'd love to help you code! 💻\n\nTo write the best possible solution, it helps to know:\n\n1. **Language** — Python, JavaScript, TypeScript, Rust, SQL, etc.?\n2. **What it should do** — Describe the input, expected output, and any constraints\n3. **Context** — Is this a standalone script, part of an app, a microservice?\n4. **Any error messages?** — If you're debugging, paste the error and relevant code\n\nOr just describe what you need in plain English and I'll take a first pass — then we can iterate from there.\n\nWhat are we building? 🛠️`;
-  }
-
-  /* ── Translate ── */
-  if (/^translate|translation (of|for)|translate (this|the|it)/i.test(q)) {
-    return `I'm happy to translate! 🌐\n\nJust share:\n1. **The text** you'd like translated\n2. **Target language** (e.g., Spanish, French, Japanese, Arabic, Mandarin, etc.)\n\nFor example: *"Translate 'The stars are beautiful tonight' to French"*\n\nI translate across **50+ languages** with attention to tone, register, and cultural nuance — not just word-for-word. I'll also flag any idiomatic phrases that don't translate directly.`;
-  }
-
-  /* ── Writing help ── */
-  if (/help me write|write (an?|the|my) (email|letter|essay|report|bio|summary|post|article)/i.test(q)) {
-    return `Let's write something great together! ✍️\n\nTo craft it well, tell me:\n\n- **Format** — Email? Essay? LinkedIn post? Cover letter? Report?\n- **Topic & purpose** — What's it about, and what should it accomplish?\n- **Audience** — Who's reading it? (Boss, clients, general public, etc.)\n- **Tone** — Professional? Warm? Persuasive? Conversational?\n- **Key points** — Anything specific that must be included?\n- **Length** — Short and punchy, or detailed?\n\nThe more context, the better I can tailor it. What are we writing? 📝`;
-  }
-
-  /* ── Summarize ── */
-  if (/^summarize|give me a summary|tldr|tl;dr|sum up/i.test(q)) {
-    return `Happy to help summarize! 📋\n\nPaste the text, article, or document you'd like condensed, and let me know:\n- **How long** should the summary be? (3 bullets? 1 paragraph? 2 pages?)\n- **What's most important** to preserve? (Key arguments, action items, data?)\n- **Who's it for?** (Executive briefing? Personal notes? Presentation?)\n\nPaste the content and I'll get to work! ⚡`;
-  }
-
-  /* ── Thank you ── */
-  if (/^thank(s| you)|much appreciated|great answer|that('s| is) (great|helpful|amazing|perfect)/i.test(q)) {
-    return pick([
-      `You're very welcome! 😊 That's exactly what I'm here for. Anything else you'd like to explore?`,
-      `Happy to help! Feel free to ask me anything else — I'm here whenever you need me. 🚀`,
-      `Glad that was useful! Is there anything else you'd like to dig into? I'm all yours. ✦`,
-    ]);
-  }
-
-  /* ── Who are you ── */
-  if (/who are you|what are you|your name|tell me about yourself|about (aura|you)/i.test(q)) {
-    return `I'm **Aura AI** — an intelligent conversational assistant built to be genuinely useful across a huge range of tasks.\n\n**What makes me different:**\n- I aim for depth, not just surface-level answers\n- I can adapt my tone — from casual chat to rigorous analysis\n- I think step-by-step on complex problems rather than jumping to conclusions\n- I'll tell you when I'm uncertain rather than making things up\n\n**I was designed to help with:**\n✍️ Writing & editing &nbsp;·&nbsp; 🔬 Research & explanation &nbsp;·&nbsp; 💻 Code\n🧠 Brainstorming &nbsp;·&nbsp; 🌐 Translation &nbsp;·&nbsp; 📊 Analysis & strategy\n\nThink of me as a knowledgeable, always-available thinking partner. What would you like to tackle today?`;
-  }
-
-  /* ── Joke ── */
-  if (/tell me a joke|make me laugh|something funny|joke/i.test(q)) {
-    return pick([
-      `Why do programmers prefer dark mode?\n\nBecause **light attracts bugs**. 🐛😄\n\nWant another one?`,
-      `A photon checks into a hotel. The bellhop asks, "Can I help with your luggage?"\n\nThe photon replies: **"No thanks — I'm traveling light."** ⚡😄`,
-      `I asked my AI assistant to tell me a joke about quantum mechanics.\n\n**It said it would — and wouldn't.**\n\nSimultaneously. 🤭`,
-    ]);
-  }
-
-  /* ── Weather / real-time data ── */
-  if (/weather|temperature|forecast|news today|latest news|current events/i.test(q)) {
-    return `I don't have access to real-time data like live weather or today's news — my knowledge has a cutoff and I can't browse the internet.\n\nFor **weather**, I'd recommend:\n- weather.com or your phone's native weather app\n- Typing your city into Google\n\nFor **news**, great sources include:\n- Reuters, BBC News, or AP News for balanced coverage\n- Your preferred news aggregator (Apple News, Google News, etc.)\n\nHowever, if you want me to **explain a current topic you've read about**, analyze perspectives, or help you understand a complex news story — I'm great for that! Just share what you've read. 📰`;
-  }
-
-  /* ── Math / calculation ── */
-  if (/calculate|what is \d|solve|equation|formula|math|algebra|calculus|\d+\s*[\+\-\*\/\^]\s*\d+/i.test(q)) {
-    // Try to detect and answer simple math
-    const mathMatch = q.match(/[\d\s\+\-\*\/\^\(\)\.]+/);
-    if (mathMatch) {
-      try {
-        // Safe eval for basic math
-        const expr = mathMatch[0].trim().replace(/\^/g,'**');
-        if (/^[\d\s\+\-\*\/\.\(\)\*]+$/.test(expr)) {
-          const result = Function('"use strict"; return (' + expr + ')')();
-          if (typeof result === 'number' && isFinite(result)) {
-            return `The answer is **${result.toLocaleString()}**.\n\nNeed me to show the working, or is there a more complex problem I can help with? 🧮`;
-          }
-        }
-      } catch(e) {}
+      // --- Default intelligent response ---
+      const defaults = [
+        "That\'s an interesting message! Could you give me a bit more detail so I can give you the best possible answer? 🤔",
+        "I hear you! To help you properly, could you expand on that a little? I want to make sure I understand exactly what you need.",
+        "Interesting! Tell me more — the more context you give, the better I can tailor my response to your needs. 🎯",
+        "Good point! I\'d love to help with this. What specific outcome are you looking for?"
+      ];
+      return defaults[Math.floor(Math.random()*defaults.length)];
     }
-    return `I'd be happy to help with math! 🧮\n\nShare the specific problem, equation, or calculation and I'll walk through it step by step — showing all the working so you can follow along.\n\nI can handle everything from basic arithmetic to calculus, statistics, linear algebra, and beyond. What are we solving?`;
-  }
 
-  /* ── Defaults ── */
-  const defaults = [
-    `That's an interesting one! Let me think through this with you.\n\nAt its core, this touches on several key considerations worth unpacking carefully. The most effective approach depends on your specific goals and context.\n\n**A few directions we could explore:**\n- The underlying principles and theory\n- Practical applications and real-world examples\n- Common pitfalls and how to avoid them\n- Step-by-step implementation strategies\n\nWhich angle would be most useful for you? The more context you share, the sharper I can make my response. 🎯`,
+    // ===== CORE FUNCTIONS =====
+    function createConversation(title) {
+      const id = 'conv_' + Date.now();
+      conversations[id] = { id, title: title || 'New Chat', messages: [], created: Date.now() };
+      return id;
+    }
 
-    `Great topic to dig into! Here's my honest take:\n\nThis is one of those areas where the right answer genuinely depends on your specific situation — but there are some universal principles worth applying.\n\nGenerally speaking, the key is to **start with clarity on what success looks like**, then work backwards to identify the most direct path. Avoid over-complicating — elegant solutions tend to outperform complex ones.\n\nWhat specific outcome are you trying to achieve? I can give much more targeted guidance once I understand the end goal. 💡`,
+    function startNewChat() {
+      currentConvId = createConversation('New Chat');
+      messageCount = 0;
+      document.getElementById('messagesContainer').innerHTML = `
+        <div class="welcome-screen" id="welcomeScreen">
+          <div class="welcome-logo">✨</div>
+          <div>
+            <div class="welcome-title">Hello, I\'m Aura AI</div>
+            <div class="welcome-sub" style="margin-top:8px">Your intelligent companion for coding, writing, analysis, and creative tasks. What would you like to explore today?</div>
+          </div>
+          <div class="suggestions-grid">
+            <div class="suggestion-card" onclick="sendSuggestion(\'Help me write a creative short story\')">
+              <span class="suggestion-icon">✍️</span>
+              <div class="suggestion-text"><strong>Creative Writing</strong>Help me craft a story</div>
+            </div>
+            <div class="suggestion-card" onclick="sendSuggestion(\'Explain quantum computing in simple terms\')">
+              <span class="suggestion-icon">🔬</span>
+              <div class="suggestion-text"><strong>Explain a concept</strong>Break down complex ideas</div>
+            </div>
+            <div class="suggestion-card" onclick="sendSuggestion(\'Review this code and suggest improvements:\\nfunction add(a,b) { return a+b }\')">
+              <span class="suggestion-icon">💻</span>
+              <div class="suggestion-text"><strong>Code Review</strong>Debug or improve code</div>
+            </div>
+            <div class="suggestion-card" onclick="sendSuggestion(\'Help me brainstorm startup ideas in tech\')">
+              <span class="suggestion-icon">💡</span>
+              <div class="suggestion-text"><strong>Brainstorm</strong>Generate creative ideas</div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('chatTitleHeader').textContent = 'New Chat';
+      document.getElementById('userInput').value = '';
+      renderHistory();
+    }
 
-    `I find this genuinely interesting to think through!\n\nThere are a few different angles worth considering here, and I want to make sure I give you the most useful perspective rather than a generic answer.\n\nCould you tell me a bit more about:\n- **The context** — what's this for?\n- **What you already know** — so I don't repeat what you've already figured out\n- **What would be most helpful** — an overview, deep analysis, practical steps, or something else?\n\nWith that, I can give you a response that's actually tailored to you rather than a one-size-fits-all answer. 😊`,
+    function renderHistory() {
+      const hist = document.getElementById('chatHistory');
+      hist.innerHTML = \'<div class="sidebar-section-label">Recent Chats</div>\';
+      Object.values(conversations).reverse().forEach(conv => {
+        const item = document.createElement(\'div\');
+        item.className = \'history-item\' + (conv.id === currentConvId ? \'  active\' : \'\');
+        item.innerHTML = `<span class="hi-icon">💬</span><span class="hi-text">${conv.title}</span>`;
+        item.onclick = () => loadConversation(conv.id);
+        hist.appendChild(item);
+      });
+    }
 
-    `This is worth exploring carefully — there's real depth here.\n\nRather than give you a surface-level take, let me ask: **what's driving this question for you?**\n\nSometimes the best answer depends entirely on context — your goals, constraints, background, and what you've already tried. Share a bit more and I'll make sure my response is genuinely useful rather than generic.\n\nI'm here to think through this *with* you, not just at you. 🤝`,
-  ];
-  return pick(defaults);
-}
+    function loadConversation(id) {
+      currentConvId = id;
+      const conv = conversations[id];
+      const mc = document.getElementById(\'messagesContainer\');
+      mc.innerHTML = \'\';
+      conv.messages.forEach(msg => renderMessage(msg.role, msg.text, msg.time, false));
+      mc.scrollTop = mc.scrollHeight;
+      document.getElementById(\'chatTitleHeader\').textContent = conv.title;
+      renderHistory();
+    }
 
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function setView(view) {
+      document.querySelectorAll(\'.nav-item\').forEach(n => n.classList.remove(\'active\'));
+      event.currentTarget.classList.add(\'active\');
+      if (view === \'chat\') startNewChat();
+    }
 
-/* ─── Init ──────────────────────────────────────────────────────────────── */
-inp.focus();
-</script>
+    function autoResize(el) {
+      el.style.height = \'auto\';
+      el.style.height = Math.min(el.scrollHeight, 140) + \'px\';
+    }
+
+    function handleKeyDown(e) {
+      if (e.key === \'Enter\' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function sendSuggestion(text) {
+      document.getElementById(\'userInput\').value = text;
+      sendMessage();
+    }
+
+    function toggleQuickActions() {
+      const qa = document.getElementById(\'quickActions\');
+      qa.style.display = qa.style.display === \'none\' ? \'flex\' : \'none\';
+    }
+
+    function renderMessage(role, text, time, animate = true) {
+      const mc = document.getElementById(\'messagesContainer\');
+      const welcome = document.getElementById(\'welcomeScreen\');
+      if (welcome) welcome.remove();
+
+      const isUser = role === \'user\';
+      const group = document.createElement(\'div\');
+      group.className = \'msg-group\';
+      if (!animate) group.style.animation = \'none\';
+
+      const processedText = isUser ? escapeHtml(text) : markdownToHtml(text);
+      const sender = isUser ? \'You\' : AURA_NAME;
+      const avatarClass = isUser ? \'user-av\' : \'ai\';
+      const avatarText = isUser ? (document.getElementById(\'userAvatar\')?.textContent || \'E\') : \'✨\';
+      const bubbleClass = isUser ? \'user\' : \'ai\';
+      const rowClass = isUser ? \'user\' : \'\';
+
+      group.innerHTML = `
+        <div class="msg-row ${rowClass}">
+          <div class="msg-avatar ${avatarClass}">${avatarText}</div>
+          <div class="msg-content">
+            <div class="msg-sender">${sender}</div>
+            <div class="msg-bubble ${bubbleClass}">${processedText}</div>
+            <div class="msg-time">${time}</div>
+          </div>
+        </div>
+        ${!isUser ? `<div class="msg-actions">
+          <button class="msg-action-btn" onclick="copyMsg(this)">📋 Copy</button>
+          <button class="msg-action-btn" onclick="regenLast()">🔄 Regenerate</button>
+          <button class="msg-action-btn" onclick="thumbUp(this)">👍</button>
+          <button class="msg-action-btn" onclick="thumbDown(this)">👎</button>
+        </div>` : \'\'}
+      `;
+      mc.appendChild(group);
+      mc.scrollTop = mc.scrollHeight;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,\'&amp;\').replace(/</g,\'&lt;\').replace(/>/g,\'&gt;\').replace(/\n/g,\'<br>\');
+    }
+
+    function markdownToHtml(text) {
+      return text
+        .replace(/\*\*(.+?)\*\*/g, \'<strong>$1</strong>\')
+        .replace(/\*(.+?)\*/g, \'<em>$1</em>\')
+        .replace(/```([\s\S]*?)```/g, \'<pre><code>$1</code></pre>\')
+        .replace(/`(.+?)`/g, \'<code>$1</code>\')
+        .replace(/^- (.+)/gm, \'<li>$1</li>\')
+        .replace(/(<li>.*<\/li>)/s, \'<ul>$1</ul>\')
+        .replace(/^\d+\. (.+)/gm, \'<li>$1</li>\')
+        .replace(/\n\n/g, \'<br><br>\')
+        .replace(/\n/g, \'<br>\');
+    }
+
+    function copyMsg(btn) {
+      const bubble = btn.closest(\'.msg-group\').querySelector(\'.msg-bubble\');
+      navigator.clipboard.writeText(bubble.innerText).then(() => showToast());
+    }
+
+    function showToast() {
+      const t = document.getElementById(\'copiedToast\');
+      t.classList.add(\'show\');
+      setTimeout(() => t.classList.remove(\'show\'), 2000);
+    }
+
+    function thumbUp(btn) {
+      btn.textContent = \'👍\u2714\'
+      btn.style.color = \'#10b981\';
+    }
+    function thumbDown(btn) {
+      btn.textContent = \'👎\u2714\';
+      btn.style.color = \'#ef4444\';
+    }
+
+    let lastUserMsg = \'\';
+    function regenLast() {
+      if (!lastUserMsg) return;
+      const mc = document.getElementById(\'messagesContainer\');
+      const groups = mc.querySelectorAll(\'.msg-group\');
+      if (groups.length) groups[groups.length-1].remove();
+      streamResponse(lastUserMsg);
+    }
+
+    function sendMessage() {
+      const input = document.getElementById(\'userInput\');
+      const text = input.value.trim();
+      if (!text || isTyping) return;
+
+      if (!currentConvId) {
+        currentConvId = createConversation(text.substring(0, 30) + (text.length > 30 ? \'...\' : \'\'));
+      } else if (messageCount === 0) {
+        conversations[currentConvId].title = text.substring(0, 30) + (text.length > 30 ? \'...\' : \'\');
+        document.getElementById(\'chatTitleHeader\').textContent = conversations[currentConvId].title;
+      }
+
+      const t = now();
+      lastUserMsg = text;
+      renderMessage(\'user\', text, t);
+      if (conversations[currentConvId]) {
+        conversations[currentConvId].messages.push({role:\'user\', text, time: t});
+      }
+      messageCount++;
+      input.value = \'\';
+      input.style.height = \'auto\';
+      renderHistory();
+      streamResponse(text);
+    }
+
+    function streamResponse(userText) {
+      isTyping = true;
+      document.getElementById(\'sendBtn\').disabled = true;
+      const typingEl = document.getElementById(\'typingIndicator\');
+      typingEl.classList.add(\'visible\');
+
+      const mc = document.getElementById(\'messagesContainer\');
+      mc.scrollTop = mc.scrollHeight;
+
+      const response = getAuraResponse(userText);
+      const typingDelay = Math.min(400 + response.length * 10, 2200);
+
+      setTimeout(() => {
+        typingEl.classList.remove(\'visible\');
+        const t = now();
+        renderMessage(\'assistant\', response, t);
+        if (currentConvId && conversations[currentConvId]) {
+          conversations[currentConvId].messages.push({role:\'assistant\', text: response, time: t});
+        }
+        isTyping = false;
+        document.getElementById(\'sendBtn\').disabled = false;
+      }, typingDelay);
+    }
+
+    function editProfile() {
+      const name = prompt(\'Enter your name:\', document.getElementById(\'userName\').textContent);
+      if (name) {
+        document.getElementById(\'userName\').textContent = name;
+        document.getElementById(\'userAvatar\').textContent = name[0].toUpperCase();
+      }
+    }
+
+    // ===== INIT =====
+    window.onload = function() {
+      currentConvId = createConversation(\'New Chat\');
+      renderHistory();
+      document.getElementById(\'userInput\').focus();
+    };
+  <\/script>
 </body>
-</html>
+  </html>
