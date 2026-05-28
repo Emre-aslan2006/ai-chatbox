@@ -251,7 +251,7 @@
 <script>
 (function(){
   var THEME_KEY='aura_theme',CHATS_KEY='aura_chats_v2';
-  var hist=[],chats=[],cid='',abortCtrl=null,generating=false,activeCtxId=null,codeMode=false;
+  var hist=[],chats=[],cid='',abortCtrl=null,generating=false,activeCtxId=null,codeMode=false,toastTimer=null;
   var SYS='You are Aura AI, a brilliant and helpful AI assistant. Respond naturally, helpfully, and thoroughly. Use markdown formatting when useful: headers, bullet points, bold text, code blocks with language tags. For code always use fenced code blocks.';
   function el(id){return document.getElementById(id);}
   var wrap=el('messagesWrap'),inner=el('messagesInner'),welcome=el('welcomeScreen');
