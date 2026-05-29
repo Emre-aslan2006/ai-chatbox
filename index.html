@@ -787,7 +787,9 @@ return text;
     t=t.replace(/^>\s?/gm,'');
     // Trim excessive blank lines
     t=t.replace(/\n{3,}/g,'\n\n');
-    return t.trim();
+        t=t.replace(/[\u2000-\u200B\u2003\u2004\u2005\u2009\u200A\u202F\u205F\u3000]/g,' ');
+    t=t.replace(/ {2,}/g,' ');
+return t.trim();
   }
   function latexToText(t){
     // Helper: extract brace-balanced content after \cmd{
@@ -838,8 +840,8 @@ return text;
     t=t.replace(/\\left\s*/g,'');t=t.replace(/\\right\s*/g,'');
     t=t.replace(/\\left.|\\right./g,'');
     // Exponents/subscripts
-    t=t.replace(/^{([^{}]*)}/g,'^($1)');t=t.replace(/_{([^{}]*)}/g,'_($1)');
-    t=t.replace(/^([0-9a-zA-Z])/g,'^$1');t=t.replace(/_([0-9a-zA-Z])/g,'_$1');
+    t=t.replace(/\^{([^{}]*)}/g,'^($1)');t=t.replace(/_{([^{}]*)}/g,'_($1)');
+    t=t.replace(/\^([0-9a-zA-Z])/g,'^$1');t=t.replace(/_([0-9a-zA-Z])/g,'_$1');
     // Clean up
     t=t.replace(/\\\\/g,'\n');
     t=t.replace(/\\[a-zA-Z]+/g,'');
