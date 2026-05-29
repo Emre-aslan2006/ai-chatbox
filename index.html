@@ -835,7 +835,7 @@ return text;
     t=t.replace(/\\left\s*\(/g,'(');t=t.replace(/\\right\s*\)/g,')');
     t=t.replace(/\\left\s*\[/g,'[');t=t.replace(/\\right\s*\]/g,']');
     t=t.replace(/\\left\s*\{/g,'(');t=t.replace(/\\right\s*\}/g,')');
-    t=t.replace(/\\lefts*|/g,'|');t=t.replace(/\\rights*|/g,'|');
+    t=t.replace(/\\left\s*/g,'');t=t.replace(/\\right\s*/g,'');
     t=t.replace(/\\left.|\\right./g,'');
     // Exponents/subscripts
     t=t.replace(/^{([^{}]*)}/g,'^($1)');t=t.replace(/_{([^{}]*)}/g,'_($1)');
