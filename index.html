@@ -793,7 +793,10 @@ return text;
   // Call AI
   function callAI(messages,onDone,onErr){
     abortCtrl=new AbortController();
+    // Build context - keep SYS + last ~4 message exchanges if too long
+    var MAX_CHARS=3500;
     var parts=messages.map(function(m){return(m.role==='user'?'User':'Assistant')+': '+m.content;}).join('\n');
+    if(parts.length>MAX_CHARS){parts=parts.slice(parts.length-MAX_CHARS);}
     var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+
       '?model=openai&seed='+Math.floor(Math.random()*99999)+'&private=true';
     var attempts=0;
@@ -807,11 +810,7 @@ return text;
         onDone(clean);
       }).catch(function(e){
         if(e.name==='AbortError'){onDone(null);return;}
-        if(attempts<3){
-          setTimeout(tryFetch,2000);
-        }else{
-          onErr(e);
-        }
+        if(attempts<3){setTimeout(tryFetch,2000);}else{onErr(e);}
       });
     }
     tryFetch();
