@@ -431,6 +431,15 @@
 
 
 /* ===== KATEX MATH RENDERING ===== */
+
+.math-fallback {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(167,139,250,.1);
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-size: 13px;
+  color: var(--text);
+}
 .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
@@ -670,6 +679,14 @@
   function md(text){
     var BT=String.fromCharCode(96);
     var blocks=[];
+    // LaTeX math placeholder extraction (protect from markdown processing)
+    var mathBlocks=[];
+    // Display math: \[...\] 
+    text=text.replace(/\\\[([\s\S]*?)\\\]/g,function(_,m){var j=mathBlocks.length;mathBlocks.push({display:true,src:m.trim()});return '~~MATH'+j+'~~';});
+    // Inline math: \(...\)
+    text=text.replace(/\\\(([\s\S]*?)\\\)/g,function(_,m){var j=mathBlocks.length;mathBlocks.push({display:false,src:m.trim()});return '~~MATH'+j+'~~';});
+    // Double-dollar display: $$...$$
+    text=text.replace(/\$\$([\s\S]*?)\$\$/g,function(_,m){var j=mathBlocks.length;mathBlocks.push({display:true,src:m.trim()});return '~~MATH'+j+'~~';});
     var cRe=new RegExp(BT+BT+BT+'(\\w*)\\n?([\\s\\S]*?)'+BT+BT+BT,'g');
     var iRe=new RegExp(BT+'([^'+BT+'\\n]+)'+BT,'g');
     text=text.replace(cRe,function(_,lang,code){
@@ -690,7 +707,22 @@
     text=text.split('\n\n').map(function(p){p=p.trim();if(!p)return '';if(/^<[hHuUoObBpHR]/.test(p))return p;return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('\n');
     blocks.forEach(function(b,i){text=text.replace('~~C'+i+'~~',b);});
     iblocks.forEach(function(b,i){text=text.replace('~~I'+i+'~~',b);});
-    return text;
+        // Restore LaTeX math blocks with KaTeX rendering
+    mathBlocks.forEach(function(m,i){
+      var rendered;
+      try {
+        if(window.katex){
+          rendered = window.katex.renderToString(m.src,{displayMode:m.display,throwOnError:false});
+        } else {
+          // KaTeX not loaded yet - show styled raw LaTeX as fallback
+          rendered = m.display ? '<div class="math-fallback">\\['+esc(m.src)+'\\]</div>' : '<span class="math-fallback">\\('+esc(m.src)+'\\)</span>';
+        }
+      } catch(e) {
+        rendered = m.display ? '<div class="math-fallback">\\['+esc(m.src)+'\\]</div>' : '<span class="math-fallback">\\('+esc(m.src)+'\\)</span>';
+      }
+      text=text.replace('~~MATH'+i+'~~', rendered);
+    });
+return text;
   }
   window._acopy=function(btn){
     var c=btn.closest('.code-block').querySelector('code');
