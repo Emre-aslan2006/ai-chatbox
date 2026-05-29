@@ -939,9 +939,9 @@
     document.getElementById('loginFooterText').style.display = isForgot ? 'none' : '';
     clearLoginMsg();
     if(tab==='signup') {
-      document.getElementById('loginFooterText').innerHTML = 'Already have an account? <a onclick="switchLoginTab('login')">Sign in</a>';
+      document.getElementById('loginFooterText').innerHTML = "Already have an account? <a onclick=\"switchLoginTab('login')\" style=\"color:#a78bfa;cursor:pointer;\">Sign in</a>";
     } else if(isLogin) {
-      document.getElementById('loginFooterText').innerHTML = 'Don\'t have an account? <a onclick="switchLoginTab(\'signup\')">Sign up free</a>';
+      document.getElementById('loginFooterText').innerHTML = "Don't have an account? <a onclick=\"switchLoginTab('signup')\" style=\"color:#a78bfa;cursor:pointer;\">Sign up free</a>";
     }
   }
 
