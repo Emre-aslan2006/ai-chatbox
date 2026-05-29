@@ -790,7 +790,28 @@ return text;
     return t.trim();
   }
   function latexToText(t){
-    // Symbols first
+    // Helper: extract brace-balanced content after \cmd{
+    function extractBraced(s,pos){
+      var d=0,start=-1,i;
+      for(i=pos;i<s.length;i++){
+        if(s[i]==='{'){if(d===0)start=i;d++;}
+        else if(s[i]==='}'){d--;if(d===0)return{content:s.slice(start+1,i),end:i+1};}
+      }
+      return null;
+    }
+    // Iterative frac/sqrt substitution (handles nesting)
+    for(var pass=0;pass<6;pass++){
+      // \frac{num}{den}
+      t=t.replace(/\\frac(s*){/g,function(){
+        return '~~FRAC~~{';
+      });
+      t=t.replace(/~~FRAC~~{([^{}]*)}{([^{}]*)}/g,'($1)/($2)');
+      t=t.replace(/~~FRAC~~/g,'\\frac');
+      // \sqrt{arg}
+      t=t.replace(/\\sqrt{([^{}]*)}/g,'√($1)');
+    }
+    t=t.replace(/\\sqrt/g,'√');
+    // Symbols
     t=t.replace(/\\times/g,'×');t=t.replace(/\\cdot/g,'·');
     t=t.replace(/\\div/g,'÷');t=t.replace(/\\pm/g,'±');t=t.replace(/\\mp/g,'∓');
     t=t.replace(/\\neq/g,'≠');t=t.replace(/\\leq/g,'≤');t=t.replace(/\\geq/g,'≥');
@@ -803,29 +824,25 @@ return text;
     t=t.replace(/\\to\b|\\rightarrow/g,'→');t=t.replace(/\\leftarrow/g,'←');
     t=t.replace(/\\sum/g,'Σ');t=t.replace(/\\int/g,'∫');t=t.replace(/\\in\b/g,'∈');
     t=t.replace(/\\quad|\\qquad/g,'  ');t=t.replace(/\\[,;! ]/g,'');
-    // sqrt
-    for(var i=0;i<3;i++)t=t.replace(/\\sqrt\{([^{}]*)\}/g,'√($1)');
-    t=t.replace(/\\sqrt/g,'√');
-    // text wrappers
-    t=t.replace(/\\text\{([^{}]*)\}/g,'$1');
-    t=t.replace(/\\mathrm\{([^{}]*)\}/g,'$1');
-    t=t.replace(/\\mathbf\{([^{}]*)\}/g,'$1');
-    t=t.replace(/\\mathit\{([^{}]*)\}/g,'$1');
-    t=t.replace(/\\boxed\{([^{}]*)\}/g,'[$1]');
-    // left/right
-    t=t.replace(/\\left\s*\(/g,'(');t=t.replace(/\\right\s*\)/g,')');
-    t=t.replace(/\\left\s*\[/g,'[');t=t.replace(/\\right\s*\]/g,']');
-    t=t.replace(/\\left\s*\{/g,'(');t=t.replace(/\\right\s*\}/g,')');
-    t=t.replace(/\\left\s*\|/g,'|');t=t.replace(/\\right\s*\|/g,'|');
-    t=t.replace(/\\left\.|\\right\./g,'');
-    // exponents/subscripts
-    t=t.replace(/\^\{([^{}]*)\}/g,'^($1)');t=t.replace(/_\{([^{}]*)\}/g,'_($1)');
-    t=t.replace(/\^([0-9a-zA-Z])/g,'^$1');t=t.replace(/_([0-9a-zA-Z])/g,'_$1');
-    // frac (after inner content is resolved)
-    for(var j=0;j<4;j++)t=t.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g,'($1)/($2)');
-    // clean up
+    // Text wrappers
+    t=t.replace(/\\text{([^{}]*)}/g,'$1');
+    t=t.replace(/\\mathrm{([^{}]*)}/g,'$1');
+    t=t.replace(/\\mathbf{([^{}]*)}/g,'$1');
+    t=t.replace(/\\mathit{([^{}]*)}/g,'$1');
+    t=t.replace(/\\operatorname{([^{}]*)}/g,'$1');
+    t=t.replace(/\\boxed{([^{}]*)}/g,'[$1]');
+    // Left/right
+    t=t.replace(/\\lefts*(/g,'(');t=t.replace(/\\rights*)/g,')');
+    t=t.replace(/\\lefts*[/g,'[');t=t.replace(/\\rights*]/g,']');
+    t=t.replace(/\\lefts*{/g,'(');t=t.replace(/\\rights*}/g,')');
+    t=t.replace(/\\lefts*|/g,'|');t=t.replace(/\\rights*|/g,'|');
+    t=t.replace(/\\left.|\\right./g,'');
+    // Exponents/subscripts
+    t=t.replace(/^{([^{}]*)}/g,'^($1)');t=t.replace(/_{([^{}]*)}/g,'_($1)');
+    t=t.replace(/^([0-9a-zA-Z])/g,'^$1');t=t.replace(/_([0-9a-zA-Z])/g,'_$1');
+    // Clean up
     t=t.replace(/\\\\/g,'\n');
-    t=t.replace(/\\[a-zA-Z]+\*?/g,'');
+    t=t.replace(/\\[a-zA-Z]+*?/g,'');
     t=t.replace(/[{}]/g,'');
     return t.trim();
   }
