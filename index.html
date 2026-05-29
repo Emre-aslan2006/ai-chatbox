@@ -798,6 +798,7 @@ return text;
     fetch(url,{signal:abortCtrl.signal}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
     .then(function(txt){
       var clean=txt.trim();
+      if(clean.charAt(0)==='{'){try{var _j=JSON.parse(clean);if(_j&&(_j.content||_j.text||_j.response)){clean=(_j.content||_j.text||_j.response).trim();}}catch(e){}}
       var s1=clean.indexOf('\n---\n');if(s1>0)clean=clean.substring(0,s1).trim();
       var s2=clean.indexOf('\nSupport Pollinations');if(s2>0)clean=clean.substring(0,s2).trim();
       onDone(clean);
