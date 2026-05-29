@@ -906,7 +906,7 @@ return t.trim();
             try{clean=j.choices[0].message.content||'';}catch(e){}
             if(!clean){clean=(j.content||j.text||j.response||'').trim();}
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
-            if(clean.trim().charAt(0)==='{'){try{var pj=JSON.parse(clean);clean=pj.content||pj.text||pj.response||pj.message||clean;}catch(e){}}
+            if(clean.trim().charAt(0)==='{'){try{var pj=JSON.parse(clean);if(pj.reasoning&&!pj.content&&!pj.text){setTimeout(tryNext,0);return;}clean=pj.content||pj.text||pj.response||pj.message||clean;}catch(e){}}
             if(!clean){setTimeout(tryNext,0);return;}
             onDone(clean);
           }).catch(function(e){
