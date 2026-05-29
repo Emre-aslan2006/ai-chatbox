@@ -770,6 +770,65 @@ return text;
   }
   searchInput.addEventListener('input',function(){renderSidebar(this.value);});
   // Add message
+  function cleanCopy(raw){
+    var t=raw;
+    // Display math \[...\]
+    t=t.replace(/\\\[([\s\S]*?)\\\]/g,function(_,m){return '\n'+latexToText(m)+'\n';});
+    // Inline math \(...\)
+    t=t.replace(/\\\(([\s\S]*?)\\\)/g,function(_,m){return latexToText(m);});
+    // Bold **text** and *italic*
+    t=t.replace(/\*\*([^*\n]+?)\*\*/g,'$1');
+    t=t.replace(/\*([^*\n]+?)\*/g,'$1');
+    // Strikethrough ~~text~~
+    t=t.replace(/~~([^~]+?)~~/g,'$1');
+    // Headers ### → plain
+    t=t.replace(/^#{1,6}\s+/gm,'');
+    // Blockquotes
+    t=t.replace(/^>\s?/gm,'');
+    // Trim excessive blank lines
+    t=t.replace(/\n{3,}/g,'\n\n');
+    return t.trim();
+  }
+  function latexToText(t){
+    // Symbols first
+    t=t.replace(/\\times/g,'×');t=t.replace(/\\cdot/g,'·');
+    t=t.replace(/\\div/g,'÷');t=t.replace(/\\pm/g,'±');t=t.replace(/\\mp/g,'∓');
+    t=t.replace(/\\neq/g,'≠');t=t.replace(/\\leq/g,'≤');t=t.replace(/\\geq/g,'≥');
+    t=t.replace(/\\approx/g,'≈');t=t.replace(/\\infty/g,'∞');
+    t=t.replace(/\\pi/g,'π');t=t.replace(/\\alpha/g,'α');t=t.replace(/\\beta/g,'β');
+    t=t.replace(/\\gamma/g,'γ');t=t.replace(/\\Delta/g,'Δ');t=t.replace(/\\delta/g,'δ');
+    t=t.replace(/\\theta/g,'θ');t=t.replace(/\\lambda/g,'λ');t=t.replace(/\\sigma/g,'σ');
+    t=t.replace(/\\mu/g,'μ');t=t.replace(/\\omega/g,'ω');t=t.replace(/\\rho/g,'ρ');
+    t=t.replace(/\\implies|\\Rightarrow/g,'⟹');t=t.replace(/\\iff|\\Leftrightarrow/g,'⟺');
+    t=t.replace(/\\to\b|\\rightarrow/g,'→');t=t.replace(/\\leftarrow/g,'←');
+    t=t.replace(/\\sum/g,'Σ');t=t.replace(/\\int/g,'∫');t=t.replace(/\\in\b/g,'∈');
+    t=t.replace(/\\quad|\\qquad/g,'  ');t=t.replace(/\\[,;! ]/g,'');
+    // sqrt
+    for(var i=0;i<3;i++)t=t.replace(/\\sqrt\{([^{}]*)\}/g,'√($1)');
+    t=t.replace(/\\sqrt/g,'√');
+    // text wrappers
+    t=t.replace(/\\text\{([^{}]*)\}/g,'$1');
+    t=t.replace(/\\mathrm\{([^{}]*)\}/g,'$1');
+    t=t.replace(/\\mathbf\{([^{}]*)\}/g,'$1');
+    t=t.replace(/\\mathit\{([^{}]*)\}/g,'$1');
+    t=t.replace(/\\boxed\{([^{}]*)\}/g,'[$1]');
+    // left/right
+    t=t.replace(/\\left\s*\(/g,'(');t=t.replace(/\\right\s*\)/g,')');
+    t=t.replace(/\\left\s*\[/g,'[');t=t.replace(/\\right\s*\]/g,']');
+    t=t.replace(/\\left\s*\{/g,'(');t=t.replace(/\\right\s*\}/g,')');
+    t=t.replace(/\\left\s*\|/g,'|');t=t.replace(/\\right\s*\|/g,'|');
+    t=t.replace(/\\left\.|\\right\./g,'');
+    // exponents/subscripts
+    t=t.replace(/\^\{([^{}]*)\}/g,'^($1)');t=t.replace(/_\{([^{}]*)\}/g,'_($1)');
+    t=t.replace(/\^([0-9a-zA-Z])/g,'^$1');t=t.replace(/_([0-9a-zA-Z])/g,'_$1');
+    // frac (after inner content is resolved)
+    for(var j=0;j<4;j++)t=t.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g,'($1)/($2)');
+    // clean up
+    t=t.replace(/\\\\/g,'\n');
+    t=t.replace(/\\[a-zA-Z]+\*?/g,'');
+    t=t.replace(/[{}]/g,'');
+    return t.trim();
+  }
   function addMessage(role,content){
     welcome.style.display='none';
     var div=document.createElement('div');div.className='msg '+role;
@@ -780,7 +839,7 @@ return text;
     div.innerHTML=(role==='user'?body+avatar:avatar+body);
     if(role==='assistant'){setTimeout(function(){var msgEl=div.querySelector('.msg-text');if(msgEl&&window.renderMathInElement){renderMathInElement(msgEl,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true},{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false,ignoredTags:['script','noscript','style','textarea','pre','code']});}},50);}
     div.querySelector('.copy-btn').addEventListener('click',function(){
-      navigator.clipboard.writeText(content).then(function(){showToast('Copied to clipboard!');});
+      navigator.clipboard.writeText(cleanCopy(content)).then(function(){showToast('Copied to clipboard!');});
     });
     var regen=div.querySelector('.regen-btn');
     if(regen)regen.addEventListener('click',regenerate);
