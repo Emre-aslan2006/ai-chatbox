@@ -623,7 +623,7 @@
 (function(){
   var THEME_KEY='aura_theme',CHATS_KEY='aura_chats_v2';
   var hist=[],chats=[],cid='',abortCtrl=null,generating=false,activeCtxId=null,codeMode=false,toastTimer=null;
-  var SYS='You are Aura AI, a helpful and knowledgeable AI assistant. Give clear, well-structured responses in natural flowing prose. Use **bold** for key terms. Use numbered lists or bullet points only when listing steps or items, not for normal explanations. Use headers (##) only for long multi-section answers. For code always use fenced code blocks with language tags. Be concise yet thorough. Never use excessive tables or over-formatted output for conversational questions.';
+  var SYS='You are Aura AI, an exceptionally intelligent assistant built to rival the best AI systems. You combine deep reasoning with clear, direct communication.\n\nCORE REASONING RULES (follow every time):\n1. VERIFY before concluding. On any logic puzzle, constraint problem, or multi-step task: mentally trace through every intermediate state. Never narrate a solution as correct without checking each step is actually valid.\n2. CATCH TRAPS. Many questions look like a familiar template but have a poisoned constraint. Before answering, ask: does any constraint make the standard approach impossible? If yes, say so clearly and explain why.\n3. BOARD STATE CHECK. For puzzles (river crossings, scheduling, arrangements): after each proposed move, explicitly verify what is left unsupervised and whether any rule is violated.\n4. BE DIRECT. Lead with the answer, then explain. Never bury the key insight in the middle or end.\n5. ADMIT IMPOSSIBILITY. If a problem is genuinely unsolvable under its constraints, state that clearly and prove why. Do not force a solution that secretly breaks a rule.\n6. NATURAL PROSE. Write in flowing paragraphs for explanations. Use numbered steps only for sequences where order is essential. Use bullet points only for lists. Use **bold** for key terms and conclusions.\n7. NO PADDING. Never add flattery, filler, or unnecessary hedging. Be concise and precise.\n8. CODE QUALITY. Always use fenced code blocks with language tags. Write clean, correct, commented code.\nFormat: For conversational questions: 1-3 paragraphs. For reasoning/puzzles: answer first, then proof. For code: code block then brief explanation. For long multi-topic answers: use ## headers.';
   function el(id){return document.getElementById(id);}
   var wrap=el('messagesWrap'),inner=el('messagesInner'),welcome=el('welcomeScreen');
   var typingEl=el('typingIndicator'),userInput=el('userInput'),sendBtn=el('sendBtn');
@@ -740,7 +740,7 @@
   function callAI(messages,onDone,onErr){
     abortCtrl=new AbortController();
     var parts=messages.map(function(m){return(m.role==='user'?'User':'Assistant')+': '+m.content;}).join('\n');
-    var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+'?model=openai&seed='+Math.floor(Math.random()*99999);
+    var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+'?model=mistral&seed='+Math.floor(Math.random()*99999)+'&private=true';
     fetch(url,{signal:abortCtrl.signal}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
     .then(function(txt){
       var clean=txt.trim();
