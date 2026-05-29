@@ -1137,6 +1137,18 @@
     });
   })();
 
+
+  /* Expose auth functions globally for onclick handlers */
+  window.switchLoginTab = switchLoginTab;
+  window.doLogin = doLogin;
+  window.doSignup = doSignup;
+  window.doForgot = doForgot;
+  window.showForgot = showForgot;
+  window.continueAsGuest = continueAsGuest;
+  window.doLogout = doLogout;
+  window.toggleUserMenu = toggleUserMenu;
+  window.showProfileInfo = showProfileInfo;
+  window.checkPwStrength = checkPwStrength;
 })();
 </script>
 </body>
