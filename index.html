@@ -157,9 +157,367 @@
     .scroll-down-btn{position:fixed;bottom:100px;right:24px;width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:none;align-items:center;justify-content:center;color:var(--text2);box-shadow:var(--shadow);z-index:50;transition:all 0.15s}
     .scroll-down-btn:hover{background:var(--hover)}
     @media(max-width:640px){.sidebar{position:fixed;z-index:100;height:100%;transition:transform 0.25s}.sidebar.collapsed{transform:translateX(-100%);width:var(--sidebar-w)}.messages-inner{padding:16px 12px 8px}}
-  </style>
+  
+/* ===== LOGIN PAGE ===== */
+#login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  transition: opacity .3s;
+}
+#login-overlay.hidden { opacity: 0; pointer-events: none; }
+
+.login-card {
+  background: var(--sb);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 36px 36px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.35);
+  animation: loginSlide .35s ease;
+}
+@keyframes loginSlide {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.login-logo svg { flex-shrink:0; }
+.login-logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+.login-logo-text span { color: #a78bfa; }
+
+.login-subtitle {
+  color: var(--muted);
+  font-size: 13.5px;
+  margin-bottom: 28px;
+}
+
+.login-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+.login-tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+}
+.login-tab.active {
+  background: var(--sb);
+  color: var(--text);
+  box-shadow: 0 1px 6px rgba(0,0,0,.2);
+}
+
+.login-field {
+  margin-bottom: 16px;
+}
+.login-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.login-field input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  color: var(--text);
+  font-size: 14.5px;
+  outline: none;
+  transition: border-color .2s;
+  box-sizing: border-box;
+}
+.login-field input:focus {
+  border-color: #a78bfa;
+}
+.login-field input.error {
+  border-color: #f87171;
+}
+
+.login-error {
+  background: rgba(248,113,113,.13);
+  border: 1px solid rgba(248,113,113,.35);
+  border-radius: 8px;
+  color: #f87171;
+  font-size: 13px;
+  padding: 9px 12px;
+  margin-bottom: 16px;
+  display: none;
+}
+.login-error.show { display: block; }
+
+.login-success {
+  background: rgba(52,211,153,.13);
+  border: 1px solid rgba(52,211,153,.35);
+  border-radius: 8px;
+  color: #34d399;
+  font-size: 13px;
+  padding: 9px 12px;
+  margin-bottom: 16px;
+  display: none;
+}
+.login-success.show { display: block; }
+
+.login-btn {
+  width: 100%;
+  padding: 11px;
+  background: linear-gradient(135deg, #7c3aed, #a78bfa);
+  border: none;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+  margin-top: 4px;
+}
+.login-btn:hover { opacity: .92; }
+.login-btn:active { transform: scale(.98); }
+.login-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.login-divider::before,.login-divider::after {
+  content:'';
+  flex:1;
+  height:1px;
+  background: var(--border);
+}
+
+.login-guest-btn {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.login-guest-btn:hover {
+  border-color: #a78bfa;
+  background: rgba(167,139,250,.07);
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.login-footer a {
+  color: #a78bfa;
+  text-decoration: none;
+  cursor: pointer;
+}
+.login-footer a:hover { text-decoration: underline; }
+
+/* User badge in header */
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .2s;
+  font-size: 13px;
+  color: var(--text);
+}
+.user-badge:hover { background: var(--hover); }
+.user-badge .avatar-circle {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#7c3aed,#a78bfa);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--sb);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 180px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.3);
+  z-index: 1000;
+  display: none;
+}
+.user-menu.show { display: block; }
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.user-menu-item:hover { background: var(--hover); }
+.user-menu-item.danger { color: #f87171; }
+.user-menu-sep { height: 1px; background: var(--border); margin: 4px 0; }
+.user-menu-email {
+  padding: 8px 10px 4px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.topbar-right { position: relative; }
+
+/* Password strength bar */
+.pw-strength {
+  margin-top: 6px;
+  display: none;
+}
+.pw-strength.show { display: block; }
+.pw-strength-bar {
+  height: 3px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+.pw-strength-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .3s, background .3s;
+}
+.pw-strength-text {
+  font-size: 11px;
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+</style>
 </head>
 <body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-card" id="loginCard">
+    <div class="login-logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="16" fill="url(#lg1)"/>
+        <path d="M10 16c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="16" cy="16" r="2.5" fill="#fff"/>
+        <defs><linearGradient id="lg1" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#7c3aed"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
+      </svg>
+      <div class="login-logo-text">Aura<span>AI</span></div>
+    </div>
+    <div class="login-subtitle">Your intelligent AI assistant</div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" id="tabLogin" onclick="switchLoginTab('login')">Sign In</button>
+      <button class="login-tab" id="tabSignup" onclick="switchLoginTab('signup')">Create Account</button>
+    </div>
+
+    <div id="loginError" class="login-error"></div>
+    <div id="loginSuccess" class="login-success"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="formLogin">
+      <div class="login-field">
+        <label>Email address</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="Your password" autocomplete="current-password"/>
+      </div>
+      <div style="text-align:right;margin-bottom:16px;margin-top:-8px;">
+        <a onclick="showForgot()" style="font-size:12.5px;color:#a78bfa;cursor:pointer;text-decoration:none;">Forgot password?</a>
+      </div>
+      <button class="login-btn" id="loginSubmitBtn" onclick="doLogin()">Sign In</button>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="formSignup" style="display:none;">
+      <div class="login-field">
+        <label>Full name</label>
+        <input type="text" id="signupName" placeholder="Your name" autocomplete="name"/>
+      </div>
+      <div class="login-field">
+        <label>Email address</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="signupPass" placeholder="Create a password" autocomplete="new-password" oninput="checkPwStrength(this.value)"/>
+        <div class="pw-strength" id="pwStrength">
+          <div class="pw-strength-bar"><div class="pw-strength-fill" id="pwFill"></div></div>
+          <div class="pw-strength-text" id="pwText"></div>
+        </div>
+      </div>
+      <div class="login-field">
+        <label>Confirm password</label>
+        <input type="password" id="signupPassConfirm" placeholder="Repeat password" autocomplete="new-password"/>
+      </div>
+      <button class="login-btn" id="signupSubmitBtn" onclick="doSignup()">Create Account</button>
+    </div>
+
+    <!-- FORGOT FORM -->
+    <div id="formForgot" style="display:none;">
+      <p style="color:var(--muted);font-size:13.5px;margin-bottom:20px;">Enter your email and we will send a reset link.</p>
+      <div class="login-field">
+        <label>Email address</label>
+        <input type="email" id="forgotEmail" placeholder="you@example.com"/>
+      </div>
+      <button class="login-btn" onclick="doForgot()">Send Reset Link</button>
+      <div style="text-align:center;margin-top:16px;">
+        <a onclick="switchLoginTab('login')" style="font-size:13px;color:#a78bfa;cursor:pointer;">Back to Sign In</a>
+      </div>
+    </div>
+
+    <div class="login-divider">or</div>
+    <button class="login-guest-btn" onclick="continueAsGuest()">Continue as Guest</button>
+
+    <div class="login-footer" id="loginFooterText">
+      Don't have an account? <a onclick="switchLoginTab('signup')">Sign up free</a>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-top">
@@ -200,6 +558,19 @@
         <button class="icon-btn" id="clearBtn" title="Clear all chats">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
         </button>
+      <div class="topbar-right">
+        <div class="user-badge" id="userBadge" onclick="toggleUserMenu()">
+          <div class="avatar-circle" id="userAvatar">G</div>
+          <span id="userBadgeName">Guest</span>
+        </div>
+        <div class="user-menu" id="userMenu">
+          <div class="user-menu-email" id="userMenuEmail">Not signed in</div>
+          <div class="user-menu-sep"></div>
+          <div class="user-menu-item" onclick="showProfileInfo()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Profile</div>
+          <div class="user-menu-sep"></div>
+          <div class="user-menu-item danger" onclick="doLogout()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg> Sign Out</div>
+        </div>
+      </div>
       </div>
     </header>
     <div class="messages-wrap" id="messagesWrap">
@@ -530,6 +901,242 @@
   });
   // Init
   renderSidebar();userInput.focus();
+
+
+  /* ===== AUTH SYSTEM ===== */
+  var AUTH_KEY = 'aura_users_v1';
+  var SESSION_KEY = 'aura_session_v1';
+
+  function getUsers() {
+    try { return JSON.parse(localStorage.getItem(AUTH_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveUsers(u) { localStorage.setItem(AUTH_KEY, JSON.stringify(u)); }
+  function getSession() {
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch(e) { return null; }
+  }
+  function saveSession(s) { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+  function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+  function hashPass(p) {
+    // Simple hash for demo purposes (in production use bcrypt/server)
+    var h = 0;
+    for(var i=0;i<p.length;i++) h = (Math.imul(31,h) + p.charCodeAt(i)) | 0;
+    return 'h_' + Math.abs(h).toString(36) + '_' + p.length;
+  }
+
+  function validateEmail(e) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+  }
+
+  function switchLoginTab(tab) {
+    var isLogin = tab === 'login';
+    var isForgot = tab === 'forgot';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
+    document.getElementById('formLogin').style.display = isLogin ? '' : 'none';
+    document.getElementById('formSignup').style.display = tab==='signup' ? '' : 'none';
+    document.getElementById('formForgot').style.display = isForgot ? '' : 'none';
+    document.getElementById('loginFooterText').style.display = isForgot ? 'none' : '';
+    clearLoginMsg();
+    if(tab==='signup') {
+      document.getElementById('loginFooterText').innerHTML = 'Already have an account? <a onclick="switchLoginTab('login')">Sign in</a>';
+    } else if(isLogin) {
+      document.getElementById('loginFooterText').innerHTML = 'Don\'t have an account? <a onclick="switchLoginTab(\'signup\')">Sign up free</a>';
+    }
+  }
+
+  function clearLoginMsg() {
+    var e = document.getElementById('loginError');
+    var s = document.getElementById('loginSuccess');
+    if(e) { e.className='login-error'; e.textContent=''; }
+    if(s) { s.className='login-success'; s.textContent=''; }
+  }
+  function showLoginError(msg) {
+    var e = document.getElementById('loginError');
+    if(e) { e.className='login-error show'; e.textContent=msg; }
+  }
+  function showLoginSuccess(msg) {
+    var s = document.getElementById('loginSuccess');
+    if(s) { s.className='login-success show'; s.textContent=msg; }
+  }
+
+  function checkPwStrength(pw) {
+    var el = document.getElementById('pwStrength');
+    var fill = document.getElementById('pwFill');
+    var txt = document.getElementById('pwText');
+    if(!pw) { el.classList.remove('show'); return; }
+    el.classList.add('show');
+    var score = 0;
+    if(pw.length>=8) score++;
+    if(/[A-Z]/.test(pw)) score++;
+    if(/[0-9]/.test(pw)) score++;
+    if(/[^A-Za-z0-9]/.test(pw)) score++;
+    var pct = [25,50,75,100][score-1] || 10;
+    var colors = ['#f87171','#fb923c','#facc15','#34d399'];
+    var labels = ['Too weak','Fair','Good','Strong'];
+    fill.style.width = pct + '%';
+    fill.style.background = colors[score-1] || '#f87171';
+    txt.textContent = labels[score-1] || 'Too weak';
+    txt.style.color = colors[score-1] || '#f87171';
+  }
+
+  function doLogin() {
+    clearLoginMsg();
+    var email = (document.getElementById('loginEmail').value || '').trim();
+    var pass = document.getElementById('loginPass').value || '';
+    if(!email) { showLoginError('Please enter your email address.'); return; }
+    if(!validateEmail(email)) { showLoginError('Please enter a valid email address.'); return; }
+    if(!pass) { showLoginError('Please enter your password.'); return; }
+    var users = getUsers();
+    var key = email.toLowerCase();
+    if(!users[key]) { showLoginError('No account found with this email. Please sign up first.'); return; }
+    if(users[key].pass !== hashPass(pass)) { showLoginError('Incorrect password. Please try again.'); return; }
+    // Success
+    var session = { email: key, name: users[key].name, loginTime: Date.now() };
+    saveSession(session);
+    onLoginSuccess(session);
+  }
+
+  function doSignup() {
+    clearLoginMsg();
+    var name = (document.getElementById('signupName').value || '').trim();
+    var email = (document.getElementById('signupEmail').value || '').trim();
+    var pass = document.getElementById('signupPass').value || '';
+    var pass2 = document.getElementById('signupPassConfirm').value || '';
+    if(!name) { showLoginError('Please enter your name.'); return; }
+    if(!email) { showLoginError('Please enter your email address.'); return; }
+    if(!validateEmail(email)) { showLoginError('Please enter a valid email address.'); return; }
+    if(pass.length < 6) { showLoginError('Password must be at least 6 characters.'); return; }
+    if(pass !== pass2) { showLoginError('Passwords do not match.'); return; }
+    var users = getUsers();
+    var key = email.toLowerCase();
+    if(users[key]) { showLoginError('An account with this email already exists. Please sign in.'); return; }
+    users[key] = { name: name, email: key, pass: hashPass(pass), created: Date.now() };
+    saveUsers(users);
+    var session = { email: key, name: name, loginTime: Date.now() };
+    saveSession(session);
+    showLoginSuccess('Account created! Welcome to Aura AI ' + name + '!');
+    setTimeout(function(){ onLoginSuccess(session); }, 1000);
+  }
+
+  function doForgot() {
+    clearLoginMsg();
+    var email = (document.getElementById('forgotEmail').value || '').trim();
+    if(!email || !validateEmail(email)) { showLoginError('Please enter a valid email address.'); return; }
+    var users = getUsers();
+    if(!users[email.toLowerCase()]) { showLoginError('No account found with this email.'); return; }
+    showLoginSuccess('If an account exists, a reset link has been sent. (Demo: password reset is simulated)');
+  }
+
+  function showForgot() {
+    document.getElementById('formLogin').style.display = 'none';
+    document.getElementById('formForgot').style.display = '';
+    document.getElementById('loginFooterText').style.display = 'none';
+    clearLoginMsg();
+  }
+
+  function continueAsGuest() {
+    var session = { email: null, name: 'Guest', guest: true };
+    saveSession(session);
+    onLoginSuccess(session);
+  }
+
+  function onLoginSuccess(session) {
+    // Hide login overlay
+    var ov = document.getElementById('login-overlay');
+    if(ov) { ov.classList.add('hidden'); setTimeout(function(){ ov.style.display='none'; }, 350); }
+    // Update user badge
+    updateUserBadge(session);
+    // Update chat greeting if welcome screen visible
+    var wg = document.getElementById('welcomeGreeting');
+    if(wg && !session.guest) wg.textContent = 'Hello, ' + session.name.split(' ')[0] + '!';
+  }
+
+  function updateUserBadge(session) {
+    var badge = document.getElementById('userBadge');
+    var av = document.getElementById('userAvatar');
+    var nm = document.getElementById('userBadgeName');
+    var em = document.getElementById('userMenuEmail');
+    if(!badge) return;
+    if(session && !session.guest) {
+      var initials = session.name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().substring(0,2);
+      if(av) av.textContent = initials;
+      if(nm) nm.textContent = session.name.split(' ')[0];
+      if(em) em.textContent = session.email;
+    } else {
+      if(av) av.textContent = 'G';
+      if(nm) nm.textContent = 'Guest';
+      if(em) em.textContent = 'Not signed in';
+    }
+  }
+
+  function toggleUserMenu() {
+    var m = document.getElementById('userMenu');
+    if(m) m.classList.toggle('show');
+  }
+
+  function showProfileInfo() {
+    var m = document.getElementById('userMenu');
+    if(m) m.classList.remove('show');
+    var sess = getSession();
+    if(!sess || sess.guest) { showToast('Sign in to view profile'); return; }
+    showToast('Signed in as: ' + sess.email);
+  }
+
+  function doLogout() {
+    var m = document.getElementById('userMenu');
+    if(m) m.classList.remove('show');
+    clearSession();
+    // Show login overlay again
+    var ov = document.getElementById('login-overlay');
+    if(ov) { ov.style.display='flex'; setTimeout(function(){ ov.classList.remove('hidden'); }, 10); }
+    // Reset user badge
+    var av = document.getElementById('userAvatar');
+    var nm = document.getElementById('userBadgeName');
+    var em = document.getElementById('userMenuEmail');
+    if(av) av.textContent='G';
+    if(nm) nm.textContent='Guest';
+    if(em) em.textContent='Not signed in';
+    // Clear tabs
+    document.getElementById('tabLogin').classList.add('active');
+    document.getElementById('tabSignup').classList.remove('active');
+    document.getElementById('formLogin').style.display='';
+    document.getElementById('formSignup').style.display='none';
+    document.getElementById('formForgot').style.display='none';
+    document.getElementById('loginFooterText').style.display='';
+    clearLoginMsg();
+    showToast('Signed out');
+  }
+
+  // Close user menu on outside click
+  document.addEventListener('click', function(e) {
+    var badge = document.getElementById('userBadge');
+    var menu = document.getElementById('userMenu');
+    if(menu && badge && !badge.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+
+  // Check session on load
+  (function initAuth() {
+    var sess = getSession();
+    if(sess) {
+      onLoginSuccess(sess);
+    }
+    // Add Enter key support for forms
+    document.addEventListener('keydown', function(e) {
+      if(e.key !== 'Enter') return;
+      var ov = document.getElementById('login-overlay');
+      if(!ov || ov.style.display === 'none') return;
+      var formLogin = document.getElementById('formLogin');
+      var formSignup = document.getElementById('formSignup');
+      var formForgot = document.getElementById('formForgot');
+      if(formLogin && formLogin.style.display !== 'none') doLogin();
+      else if(formSignup && formSignup.style.display !== 'none') doSignup();
+      else if(formForgot && formForgot.style.display !== 'none') doForgot();
+    });
+  })();
+
 })();
 </script>
 </body>
