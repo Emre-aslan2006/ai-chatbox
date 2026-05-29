@@ -899,6 +899,7 @@ return text;
             return r.json();
           }).then(function(j){
             if(!j)return;
+            if(j&&(j.status===429||(j.error&&!j.choices))){setTimeout(tryNext,0);return;}
             var clean='';
             try{clean=j.choices[0].message.content||'';}catch(e){}
             if(!clean){clean=(j.content||j.text||j.response||'').trim();}
