@@ -903,7 +903,7 @@ return t.trim();
             if(!j)return;
             if(j&&(j.status===429||(j.error&&!j.choices))){setTimeout(tryNext,0);return;}
             var clean='';
-            try{clean=j.choices[0].message.content||'';}catch(e){}
+            try{clean=j.choices[0].message.content||(j.choices[0].message&&j.choices[0].message.reasoning)||'';}catch(e){}
             if(!clean){clean=(j.content||j.text||j.response||'').trim();}
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
             if(clean.trim().charAt(0)==='{'){try{var pj=JSON.parse(clean);if(pj.content||pj.text||pj.response||pj.message){clean=pj.content||pj.text||pj.response||pj.message;}else if(pj.reasoning){var rz=pj.reasoning;var ansIdx=rz.lastIndexOf('Answer:');clean=ansIdx!==-1?rz.substring(ansIdx):rz.split('\n').filter(function(l){return l.trim();}).pop()||rz;}}catch(e){}}
