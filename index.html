@@ -842,7 +842,7 @@ return text;
     t=t.replace(/^([0-9a-zA-Z])/g,'^$1');t=t.replace(/_([0-9a-zA-Z])/g,'_$1');
     // Clean up
     t=t.replace(/\\\\/g,'\n');
-    t=t.replace(/\\[a-zA-Z]+*?/g,'');
+    t=t.replace(/\\[a-zA-Z]+/g,'');
     t=t.replace(/[{}]/g,'');
     return t.trim();
   }
