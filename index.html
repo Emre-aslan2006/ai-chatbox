@@ -979,7 +979,7 @@ return t.trim();
     addMessage('user',text);showTyping();
     if(imageMode){
       var _gid2=++genId;
-      setTimeout(function(){if(genId===_gid2)generateImage(text);else{hideTyping();generating=false;sendBtn.style.display='flex';stopBtn.style.display='none';}},0);
+      setTimeout(function(){if(genId===_gid2)generateImage(text,_gid2);else{hideTyping();generating=false;sendBtn.style.display='flex';stopBtn.style.display='none';}},0);
       return;
     }
     hist.push({role:'user',content:text});
@@ -1127,50 +1127,50 @@ return t.trim();
     showToast(imageMode?'Image mode on — describe what to generate':'Image mode off');
   });
 
-  function generateImage(prompt){
+    function generateImage(prompt,gid){
     var MODELS=['flux','turbo','flux-realism'];
     var mIdx=0;
     var seed=Math.floor(Math.random()*99999)+1;
     function tryModel(){
       if(mIdx>=MODELS.length){
+        if(typeof gid!=='undefined'&&genId!==gid)return;
         hideTyping();generating=false;sendBtn.style.display='flex';stopBtn.style.display='none';
-        var errDiv=document.createElement('div');
-        errDiv.className='msg msg-ai';
-        errDiv.innerHTML='<div class="msg-avatar"><span>AI</span></div><div class="bubble"><div class="img-card-error">Sorry, image generation failed. Please try again.</div></div>';
-        inner.appendChild(errDiv);inner.scrollTop=inner.scrollHeight;
+        var errDiv=document.createElement('div');errDiv.className='msg assistant';
+        errDiv.innerHTML='<div class="msg-avatar-wrap"><div class="msg-icon" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;font-size:11px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600">AI</div></div><div class="msg-content"><div class="msg-text"><div class="img-card-error">Sorry, image generation failed. Please try again.</div></div></div>';
+        if(typingEl.parentNode===inner)inner.insertBefore(errDiv,typingEl);else inner.appendChild(errDiv);
+        wrap.scrollTo({top:wrap.scrollHeight,behavior:'smooth'});
         return;
       }
       var model=MODELS[mIdx++];
       var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?model='+model+'&width=1024&height=1024&seed='+seed+'&enhance=true&private=true&nologo=true';
       var img=new Image();
       img.onload=function(){
+        if(typeof gid!=='undefined'&&genId!==gid)return;
         hideTyping();generating=false;sendBtn.style.display='flex';stopBtn.style.display='none';
-        var card=document.createElement('div');
-        card.className='msg msg-ai';
+        welcome.style.display='none';
+        var card=document.createElement('div');card.className='msg assistant';
         var safeP=esc(prompt);
-        card.innerHTML='<div class="msg-avatar"><span>AI</span></div><div class="bubble"><div class="img-card">'+
-          '<img src="'+url+'" alt="'+safeP+'" loading="lazy" class="gen-img"/>'+
+        card.innerHTML='<div class="msg-avatar-wrap"><div class="msg-icon" style="background:linear-gradient(135deg,#10a37f,#1a7f64);color:#fff;font-size:11px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600">AI</div></div><div class="msg-content"><div class="msg-text"><div class="img-card">'+
+          '<img src="'+url+'" alt="'+safeP+'" class="gen-img"/>'+
           '<div class="img-card-btns">'+
           '<button class="img-card-btn img-dl-btn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>'+
           '<button class="img-card-btn img-exp-btn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Expand</button>'+
           '</div>'+
-          '<div class="img-card-prompt">“'+safeP+'” &bull; '+model+'</div>'+
-          '</div></div>';
-        var dlBtn=card.querySelector('.img-dl-btn');
-        var expBtn=card.querySelector('.img-exp-btn');
-        dlBtn.addEventListener('click',function(){
+          '<div class="img-card-prompt">"'+safeP+'" &bull; '+model+'</div>'+
+          '</div></div></div>';
+        card.querySelector('.img-dl-btn').addEventListener('click',function(){
           var a=document.createElement('a');a.href=url;
           a.download=prompt.replace(/[^a-z0-9]/gi,'_').substring(0,40)+'.jpg';
           a.click();
         });
-        expBtn.addEventListener('click',function(){
+        card.querySelector('.img-exp-btn').addEventListener('click',function(){
           var lb=document.createElement('div');lb.className='img-lightbox';
           var li=document.createElement('img');li.src=url;
           lb.appendChild(li);lb.addEventListener('click',function(){lb.remove();});
           document.body.appendChild(lb);
         });
-        inner.appendChild(card);
-        inner.scrollTop=inner.scrollHeight;
+        if(typingEl.parentNode===inner)inner.insertBefore(card,typingEl);else inner.appendChild(card);
+        wrap.scrollTo({top:wrap.scrollHeight,behavior:'smooth'});
         saveChat(prompt);
       };
       img.onerror=function(){tryModel();};
@@ -1178,7 +1178,7 @@ return t.trim();
     }
     tryModel();
   }
-  // Model selector
+    // Model selector
   el('modelSelector').addEventListener('click',function(){showToast('Aura AI (powered by OpenAI-class model, free & unlimited)');});
   // Input events
   sendBtn.addEventListener('click',send);
