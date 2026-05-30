@@ -886,11 +886,11 @@ return t.trim();
     var SLOTS=[
       {m:'openai-fast',mode:'post',delay:0},
       {m:'openai',mode:'post',delay:0},
-      {m:'openai-fast',mode:'post',delay:3000},
-      {m:'openai',mode:'post',delay:5000},
+      {m:'openai-fast',mode:'post',delay:500},
+      {m:'openai',mode:'post',delay:1000},
       {m:'openai-fast',mode:'get',delay:0},
-      {m:'openai-fast',mode:'post',delay:8000},
-      {m:'openai',mode:'post',delay:12000}
+      {m:'openai-fast',mode:'post',delay:2000},
+      {m:'openai',mode:'post',delay:4000}
     ];
     var idx=0;
     function tryNext(){
@@ -906,7 +906,7 @@ return t.trim();
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({model:slot.m,messages:msgs,seed:seed,private:true,temperature:0.3}),
-            signal:abortCtrl.signal
+            signal:(typeof AbortSignal.any==="function"?AbortSignal.any([abortCtrl.signal,AbortSignal.timeout(12000)]):abortCtrl.signal)
           }).then(function(r){
             if(r.status===429){setTimeout(tryNext,0);return;}
             if(!r.ok)throw new Error('HTTP '+r.status);
@@ -921,8 +921,7 @@ return t.trim();
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
             if(clean.trim().charAt(0)==='{'){try{var pj=JSON.parse(clean);if(pj.content||pj.text||pj.response||pj.message){clean=pj.content||pj.text||pj.response||pj.message;}else if(pj.reasoning){var rz=pj.reasoning;var ansIdx=rz.lastIndexOf('Answer:');clean=ansIdx!==-1?rz.substring(ansIdx):rz.split('\n').filter(function(l){return l.trim();}).pop()||rz;}}catch(e){}}
             if(!clean){setTimeout(tryNext,0);return;}
-            if(clean.length>1500&&!/[.!?\u2026\n]/.test(clean.slice(-30))){setTimeout(tryNext,0);return;}
-            var _traceStart=/^(We need|Let me|Let's|Wait,|Wait |I need|So we|To solve|Step 1[^:]|Step1[^:])/.test(clean.trim());
+            var _traceStart=/^(We need to (find|solve|figure|calculate|determine)|Wait, (let me|I think|actually)|Step 1:)/.test(clean.trim());
             var _hasAnswer=/\b(Answer:|Therefore,|Thus,|So the answer|In conclusion|Final answer|The answer is)/.test(clean);
             if(_traceStart&&!_hasAnswer){setTimeout(tryNext,0);return;}
             onDone(clean);
@@ -935,7 +934,7 @@ return t.trim();
           var parts=messages.map(function(m){return(m.role==='user'?'User':'Assistant')+': '+m.content;}).join('\n');
           if(parts.length>MAX_CHARS)parts=parts.slice(parts.length-MAX_CHARS);
           var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+'?model='+slot.m+'&seed='+seed+'&private=true';
-          fetch(url,{signal:abortCtrl.signal}).then(function(r){
+          fetch(url,{signal:(typeof AbortSignal.any==="function"?AbortSignal.any([abortCtrl.signal,AbortSignal.timeout(12000)]):abortCtrl.signal)}).then(function(r){
             if(r.status===429){setTimeout(tryNext,0);return;}
             if(!r.ok)throw new Error('HTTP '+r.status);
             return r.text();
@@ -945,8 +944,7 @@ return t.trim();
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
             if(clean.charAt(0)==='{'){try{var _j=JSON.parse(clean);if(_j.reasoning&&!_j.content&&!_j.text){setTimeout(tryNext,0);return;}clean=(_j.content||_j.text||_j.response||(_j.choices&&_j.choices[0]&&_j.choices[0].message&&_j.choices[0].message.content)||clean).trim();}catch(e){}}
             if(!clean){setTimeout(tryNext,0);return;}
-            if(clean.length>1500&&!/[.!?\u2026\n]/.test(clean.slice(-30))){setTimeout(tryNext,0);return;}
-            var _traceStart=/^(We need|Let me|Let's|Wait,|Wait |I need|So we|To solve|Step 1[^:]|Step1[^:])/.test(clean.trim());
+            var _traceStart=/^(We need to (find|solve|figure|calculate|determine)|Wait, (let me|I think|actually)|Step 1:)/.test(clean.trim());
             var _hasAnswer=/\b(Answer:|Therefore,|Thus,|So the answer|In conclusion|Final answer|The answer is)/.test(clean);
             if(_traceStart&&!_hasAnswer){setTimeout(tryNext,0);return;}
             onDone(clean);
