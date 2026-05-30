@@ -886,11 +886,11 @@ return t.trim();
     var SLOTS=[
       {m:'openai-fast',mode:'post',delay:0},
       {m:'openai',mode:'post',delay:0},
-      {m:'openai-fast',mode:'post',delay:500},
-      {m:'openai',mode:'post',delay:1000},
+      {m:'openai-fast',mode:'post',delay:0},
+      {m:'openai',mode:'post',delay:0},
       {m:'openai-fast',mode:'get',delay:0},
-      {m:'openai-fast',mode:'post',delay:2000},
-      {m:'openai',mode:'post',delay:4000}
+      {m:'openai-fast',mode:'post',delay:0},
+      {m:'openai',mode:'post',delay:0}
     ];
     var idx=0;
     function tryNext(){
@@ -906,7 +906,7 @@ return t.trim();
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({model:slot.m,messages:msgs,seed:seed,private:true,temperature:0.3}),
-            signal:(typeof AbortSignal.any==="function"?AbortSignal.any([abortCtrl.signal,AbortSignal.timeout(12000)]):abortCtrl.signal)
+            signal:abortCtrl.signal
           }).then(function(r){
             if(r.status===429){setTimeout(tryNext,0);return;}
             if(!r.ok)throw new Error('HTTP '+r.status);
@@ -924,15 +924,15 @@ return t.trim();
             
             onDone(clean);
           }).catch(function(e){
-            if(e.name==='AbortError'&&abortCtrl.signal.aborted){onDone(null);return;}
-            setTimeout(tryNext,0);
+            if(e.name==='AbortError'){onDone(null);return;}
+            setTimeout(tryNext,500);
           });
         } else {
           var MAX_CHARS=3500;
           var parts=messages.map(function(m){return(m.role==='user'?'User':'Assistant')+': '+m.content;}).join('\n');
           if(parts.length>MAX_CHARS)parts=parts.slice(parts.length-MAX_CHARS);
           var url='https://text.pollinations.ai/'+encodeURIComponent(SYS+'\n\n'+parts+'\nAssistant:')+'?model='+slot.m+'&seed='+seed+'&private=true';
-          fetch(url,{signal:(typeof AbortSignal.any==="function"?AbortSignal.any([abortCtrl.signal,AbortSignal.timeout(12000)]):abortCtrl.signal)}).then(function(r){
+          fetch(url,{signal:abortCtrl.signal}).then(function(r){
             if(r.status===429){setTimeout(tryNext,0);return;}
             if(!r.ok)throw new Error('HTTP '+r.status);
             return r.text();
@@ -945,8 +945,8 @@ return t.trim();
             
             onDone(clean);
           }).catch(function(e){
-            if(e.name==='AbortError'&&abortCtrl.signal.aborted){onDone(null);return;}
-            setTimeout(tryNext,0);
+            if(e.name==='AbortError'){onDone(null);return;}
+            setTimeout(tryNext,500);
           });
         }
       }
