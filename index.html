@@ -1127,10 +1127,10 @@ return t.trim();
     showToast(imageMode?'Image mode on — describe what to generate':'Image mode off');
   });
 
-    function generateImage(prompt,gid){
-    var MODELS=['flux','turbo','flux-realism'];
+      function generateImage(prompt,gid){
+    var MODELS=['flux','flux-realism','turbo'];
     var mIdx=0;
-    var seed=Math.floor(Math.random()*99999)+1;
+    var seed=Math.floor(Math.random()*999999)+1;
     function tryModel(){
       if(mIdx>=MODELS.length){
         if(typeof gid!=='undefined'&&genId!==gid)return;
@@ -1142,8 +1142,9 @@ return t.trim();
         return;
       }
       var model=MODELS[mIdx++];
-      var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?model='+model+'&width=1024&height=1024&seed='+seed+'&enhance=true&private=true&nologo=true';
+      var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?model='+model+'&width=1280&height=1280&seed='+seed+'&enhance=true&private=true&nologo=true';
       var img=new Image();
+      img.crossOrigin='anonymous';
       img.onload=function(){
         if(typeof gid!=='undefined'&&genId!==gid)return;
         hideTyping();generating=false;sendBtn.style.display='flex';stopBtn.style.display='none';
@@ -1159,9 +1160,24 @@ return t.trim();
           '<div class="img-card-prompt">"'+safeP+'" &bull; '+model+'</div>'+
           '</div></div></div>';
         card.querySelector('.img-dl-btn').addEventListener('click',function(){
-          var a=document.createElement('a');a.href=url;
-          a.download=prompt.replace(/[^a-z0-9]/gi,'_').substring(0,40)+'.jpg';
-          a.click();
+          var dlBtn=card.querySelector('.img-dl-btn');
+          var origTxt=dlBtn.innerHTML;
+          dlBtn.innerHTML='Saving...';
+          dlBtn.disabled=true;
+          fetch(url)
+            .then(function(r){return r.blob();})
+            .then(function(blob){
+              var burl=URL.createObjectURL(blob);
+              var a=document.createElement('a');a.href=burl;
+              a.download=prompt.replace(/[^a-z0-9]/gi,'_').substring(0,40)+'.jpg';
+              a.click();
+              setTimeout(function(){URL.revokeObjectURL(burl);},10000);
+              dlBtn.innerHTML='Saved!';dlBtn.disabled=false;
+              setTimeout(function(){dlBtn.innerHTML=origTxt;},2000);
+            }).catch(function(){
+              var a=document.createElement('a');a.href=url;a.target='_blank';a.click();
+              dlBtn.innerHTML=origTxt;dlBtn.disabled=false;
+            });
         });
         card.querySelector('.img-exp-btn').addEventListener('click',function(){
           var lb=document.createElement('div');lb.className='img-lightbox';
