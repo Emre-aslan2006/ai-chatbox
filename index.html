@@ -704,7 +704,19 @@
     text=text.replace(/\*([^*\n]+)\*/g,'<em>$1</em>');
     text=text.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
     text=text.replace(/^---$/gm,'<hr>');
-    text=text.split('\n\n').map(function(p){p=p.trim();if(!p)return '';if(/^<[hHuUoObBpHR]/.test(p))return p;return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('\n');
+    // Markdown tables
+    text=text.replace(/(^\|.+\|[ \t]*\n\|[ \t]*:?-+:?[ \t]*(\|[ \t]*:?-+:?[ \t]*)*\|[ \t]*\n(?:\|.*\|[ \t]*\n?)*)/gm,function(block){
+      var rows=block.trim().split('\n');
+      var header=rows[0].split('|').slice(1,-1).map(function(c){return c.trim();});
+      var bodyRows=rows.slice(2);
+      var thead='<thead><tr>'+header.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead>';
+      var tbody='<tbody>'+bodyRows.map(function(r){
+        var cells=r.split('|').slice(1,-1).map(function(c){return c.trim();});
+        return '<tr>'+cells.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';
+      }).join('')+'</tbody>';
+      return '<table>'+thead+tbody+'</table>';
+    });
+    text=text.split('\n\n').map(function(p){p=p.trim();if(!p)return '';if(/^<[hHuUoObBpHRtT]/.test(p))return p;return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('\n');
     blocks.forEach(function(b,i){text=text.replace('~~C'+i+'~~',b);});
     iblocks.forEach(function(b,i){text=text.replace('~~I'+i+'~~',b);});
         // Restore LaTeX math blocks with KaTeX rendering
