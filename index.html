@@ -916,7 +916,7 @@ return t.trim();
             if(j&&(j.status===429||(j.error&&!j.choices))){setTimeout(tryNext,0);return;}
             var clean='';
             try{clean=(j.choices[0].message&&j.choices[0].message.content)||'';}catch(e){}
-            if(!clean&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.reasoning){setTimeout(tryNext,0);return;}
+            if(!clean&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.reasoning){var _rz=j.choices[0].message.reasoning;var _ai=_rz.lastIndexOf('\n\n');clean=_ai!==-1?_rz.substring(_ai).trim():_rz.split('\n').filter(function(l){return l.trim().length>20;}).pop()||_rz;}
             if(!clean){clean=(j.content||j.text||j.response||'').trim();}
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
             if(clean.trim().charAt(0)==='{'){try{var pj=JSON.parse(clean);if(pj.content||pj.text||pj.response||pj.message){clean=pj.content||pj.text||pj.response||pj.message;}else if(pj.reasoning){var rz=pj.reasoning;var ansIdx=rz.lastIndexOf('Answer:');clean=ansIdx!==-1?rz.substring(ansIdx):rz.split('\n').filter(function(l){return l.trim();}).pop()||rz;}}catch(e){}}
@@ -940,7 +940,7 @@ return t.trim();
             if(!txt)return;
             var clean=txt.trim();
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
-            if(clean.charAt(0)==='{'){try{var _j=JSON.parse(clean);if(_j.reasoning&&!_j.content&&!_j.text){setTimeout(tryNext,0);return;}clean=(_j.content||_j.text||_j.response||(_j.choices&&_j.choices[0]&&_j.choices[0].message&&_j.choices[0].message.content)||clean).trim();}catch(e){}}
+            if(clean.charAt(0)==='{'){try{var _j=JSON.parse(clean);if(_j.reasoning&&!_j.content&&!_j.text){var _rz=_j.reasoning;var _ai=_rz.lastIndexOf('\n\n');clean=_ai!==-1?_rz.substring(_ai).trim():_rz.split('\n').filter(function(l){return l.trim().length>20;}).pop()||_rz;}clean=(_j.content||_j.text||_j.response||(_j.choices&&_j.choices[0]&&_j.choices[0].message&&_j.choices[0].message.content)||clean).trim();}catch(e){}}
             if(!clean){setTimeout(tryNext,0);return;}
             
             onDone(clean);
