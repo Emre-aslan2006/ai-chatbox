@@ -1147,14 +1147,28 @@ return t.trim();
         hideTyping();generating=false;sendBtn.style.display='flex';stopBtn.style.display='none';
         var card=document.createElement('div');
         card.className='msg msg-ai';
+        var safeP=esc(prompt);
         card.innerHTML='<div class="msg-avatar"><span>AI</span></div><div class="bubble"><div class="img-card">'+
-          '<img src="'+url+'" alt="'+esc(prompt)+'" loading="lazy"/>'+
+          '<img src="'+url+'" alt="'+safeP+'" loading="lazy" class="gen-img"/>'+
           '<div class="img-card-btns">'+
-          '<button class="img-card-btn" onclick="(function(u,p){var a=document.createElement(\'a\');a.href=u;a.download=p.replace(/[^a-z0-9]/gi,\'_\').substring(0,40)+\'.jpg\';a.click();})(this.closest(\'.img-card\').querySelector(\'img\').src,\''+esc(prompt).replace(/'/g,'\\&#39;')+'\')" title="Download"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>'+
-          '<button class="img-card-btn" onclick="(function(u){var lb=document.createElement(\'div\');lb.className=\'img-lightbox\';lb.innerHTML=\'<img src=\"\'+u+\'\">\'  ;lb.onclick=function(){lb.remove();};document.body.appendChild(lb);})(this.closest(\'.img-card\').querySelector(\'img\').src)" title="Expand"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Expand</button>'+
+          '<button class="img-card-btn img-dl-btn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>'+
+          '<button class="img-card-btn img-exp-btn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Expand</button>'+
           '</div>'+
-          '<div class="img-card-prompt">“'+esc(prompt)+'” &bull; '+model+'</div>'+
+          '<div class="img-card-prompt">“'+safeP+'” &bull; '+model+'</div>'+
           '</div></div>';
+        var dlBtn=card.querySelector('.img-dl-btn');
+        var expBtn=card.querySelector('.img-exp-btn');
+        dlBtn.addEventListener('click',function(){
+          var a=document.createElement('a');a.href=url;
+          a.download=prompt.replace(/[^a-z0-9]/gi,'_').substring(0,40)+'.jpg';
+          a.click();
+        });
+        expBtn.addEventListener('click',function(){
+          var lb=document.createElement('div');lb.className='img-lightbox';
+          var li=document.createElement('img');li.src=url;
+          lb.appendChild(li);lb.addEventListener('click',function(){lb.remove();});
+          document.body.appendChild(lb);
+        });
         inner.appendChild(card);
         inner.scrollTop=inner.scrollHeight;
         saveChat(prompt);
