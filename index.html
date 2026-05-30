@@ -924,8 +924,8 @@ return t.trim();
             
             onDone(clean);
           }).catch(function(e){
-            if(e.name==='AbortError'){onDone(null);return;}
-            setTimeout(tryNext,500);
+            if(e.name==='AbortError'&&abortCtrl.signal.aborted){onDone(null);return;}
+            setTimeout(tryNext,0);
           });
         } else {
           var MAX_CHARS=3500;
@@ -945,8 +945,8 @@ return t.trim();
             
             onDone(clean);
           }).catch(function(e){
-            if(e.name==='AbortError'){onDone(null);return;}
-            setTimeout(tryNext,500);
+            if(e.name==='AbortError'&&abortCtrl.signal.aborted){onDone(null);return;}
+            setTimeout(tryNext,0);
           });
         }
       }
