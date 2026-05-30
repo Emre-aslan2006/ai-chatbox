@@ -905,7 +905,7 @@ return t.trim();
           fetch('https://text.pollinations.ai/openai',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({model:slot.m,messages:msgs,seed:seed,private:true,temperature:0.7}),
+            body:JSON.stringify({model:slot.m,messages:msgs,seed:seed,private:true,temperature:0.3}),
             signal:abortCtrl.signal
           }).then(function(r){
             if(r.status===429){setTimeout(tryNext,0);return;}
@@ -915,11 +915,16 @@ return t.trim();
             if(!j)return;
             if(j&&(j.status===429||(j.error&&!j.choices))){setTimeout(tryNext,0);return;}
             var clean='';
-            try{clean=j.choices[0].message.content||(j.choices[0].message&&j.choices[0].message.reasoning)||'';}catch(e){}
+            try{clean=(j.choices[0].message&&j.choices[0].message.content)||'';}catch(e){}
+            if(!clean&&j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.reasoning){setTimeout(tryNext,0);return;}
             if(!clean){clean=(j.content||j.text||j.response||'').trim();}
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
             if(clean.trim().charAt(0)==='{'){try{var pj=JSON.parse(clean);if(pj.content||pj.text||pj.response||pj.message){clean=pj.content||pj.text||pj.response||pj.message;}else if(pj.reasoning){var rz=pj.reasoning;var ansIdx=rz.lastIndexOf('Answer:');clean=ansIdx!==-1?rz.substring(ansIdx):rz.split('\n').filter(function(l){return l.trim();}).pop()||rz;}}catch(e){}}
             if(!clean){setTimeout(tryNext,0);return;}
+            if(clean.length>1500&&!/[.!?\u2026\n]/.test(clean.slice(-30))){setTimeout(tryNext,0);return;}
+            var _traceStart=/^(We need|Let me|Let's|Wait,|Wait |I need|So we|First,|Now,|Actually|Hmm|To solve|Step 1|Step1|Let us|OK so|OK,)/.test(clean.trim());
+            var _hasAnswer=/\b(Answer:|Therefore,|Thus,|So the answer|In conclusion|Final answer|The answer is)/.test(clean);
+            if(_traceStart&&!_hasAnswer){setTimeout(tryNext,0);return;}
             onDone(clean);
           }).catch(function(e){
             if(e.name==='AbortError'){onDone(null);return;}
@@ -938,8 +943,12 @@ return t.trim();
             if(!txt)return;
             var clean=txt.trim();
             clean=clean.replace(/\n---\nSupport Pollinations[\s\S]*/,'').replace(/\nSupport Pollinations[\s\S]*/,'').trim();
-            if(clean.charAt(0)==='{'){try{var _j=JSON.parse(clean);clean=(_j.content||_j.text||_j.response||(_j.choices&&_j.choices[0]&&_j.choices[0].message&&_j.choices[0].message.content)||clean).trim();}catch(e){}}
+            if(clean.charAt(0)==='{'){try{var _j=JSON.parse(clean);if(_j.reasoning&&!_j.content&&!_j.text){setTimeout(tryNext,0);return;}clean=(_j.content||_j.text||_j.response||(_j.choices&&_j.choices[0]&&_j.choices[0].message&&_j.choices[0].message.content)||clean).trim();}catch(e){}}
             if(!clean){setTimeout(tryNext,0);return;}
+            if(clean.length>1500&&!/[.!?\u2026\n]/.test(clean.slice(-30))){setTimeout(tryNext,0);return;}
+            var _traceStart=/^(We need|Let me|Let's|Wait,|Wait |I need|So we|First,|Now,|Actually|Hmm|To solve|Step 1|Step1|Let us|OK so|OK,)/.test(clean.trim());
+            var _hasAnswer=/\b(Answer:|Therefore,|Thus,|So the answer|In conclusion|Final answer|The answer is)/.test(clean);
+            if(_traceStart&&!_hasAnswer){setTimeout(tryNext,0);return;}
             onDone(clean);
           }).catch(function(e){
             if(e.name==='AbortError'){onDone(null);return;}
