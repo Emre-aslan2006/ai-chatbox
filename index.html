@@ -1127,10 +1127,13 @@ return t.trim();
     showToast(imageMode?'Image mode on — describe what to generate':'Image mode off');
   });
 
-      function generateImage(prompt,gid){
+        function generateImage(prompt,gid){
     var MODELS=['flux','flux-realism','turbo'];
     var mIdx=0;
     var seed=Math.floor(Math.random()*999999)+1;
+    // Auto-boost prompt for maximum quality
+    var qualityBoost='masterpiece, ultra detailed, sharp focus, high resolution, professional photography, crystal clear';
+    var enhancedPrompt=prompt+', '+qualityBoost;
     function tryModel(){
       if(mIdx>=MODELS.length){
         if(typeof gid!=='undefined'&&genId!==gid)return;
@@ -1142,7 +1145,7 @@ return t.trim();
         return;
       }
       var model=MODELS[mIdx++];
-      var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?model='+model+'&width=1280&height=1280&seed='+seed+'&enhance=true&private=true&nologo=true';
+      var url='https://image.pollinations.ai/prompt/'+encodeURIComponent(enhancedPrompt)+'?model='+model+'&width=1920&height=1920&seed='+seed+'&enhance=true&private=true&nologo=true';
       var img=new Image();
       img.crossOrigin='anonymous';
       img.onload=function(){
